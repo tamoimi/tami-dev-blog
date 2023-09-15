@@ -18,11 +18,11 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".", // contentlayer
     "paths": {
+      "contentlayer/generated": ["./.contentlayer/generated"], // contentlayer
       "@/*": ["./src/*"],
-      "contentlayer/generated": ["./.contentlayer/generated"] // contentlayer
     },
-    "baseUrl": "." // contentlayer
   },
   "include": [
     "next-env.d.ts",
