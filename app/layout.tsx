@@ -26,11 +26,23 @@ export default function RootLayout({
         {/* will add meta tag */}
       </head>
       <body
-        className={`w-1/2 m-auto my-10 antialiased min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 ${inter.className}`}
+        className={`antialiased min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 ${inter.className}`}
       >
-        <Nav />
-        {/* children will be all the pages */}
-        <main className="my-5">{children}</main>
+        <div className="max-w-2xl mx-auto py-10 px-4">
+          <header>
+            <div className="flex items-center justify-between">
+              {/* mode toggle */}
+              <button>mode</button>
+              <nav className="ml-auto text-sm font-medium space-x-6">
+                <Link href="/">Home</Link>
+                <Link href="/about">About</Link>
+              </nav>
+            </div>
+          </header>
+
+          {/* children will be all the pages */}
+          <main className="my-5">{children}</main>
+        </div>
       </body>
     </html>
   );
