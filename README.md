@@ -1,2 +1,2 @@
-## New blog with Next.js
+## New blog with Next.js 🐌
 
