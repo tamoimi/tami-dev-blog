@@ -33,3 +33,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# .gitignore 파일에 .contentlayer 디렉터리를 추가하여 앱의 각 빌드에 최신 생성 데이터가 포함되고 Git 관련 문제가 발생하지 않도록 하자.
+# contentlayer
+.contentlayer
