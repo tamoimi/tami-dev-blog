@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`antialiased min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 ${inter.className}`}
       >
-        <div className="max-w-2xl mx-auto py-10 px-4">
+        <div className="max-w-2xl mx-auto py-10 px-4 selection:bg-slate-300">
           <header>
             <div className="flex items-center justify-between">
               {/* mode toggle */}
