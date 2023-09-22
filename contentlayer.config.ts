@@ -13,25 +13,25 @@ const computedFields: ComputedFields = {
   },
 };
 
-export const Page = defineDocumentType(() => ({
-  name: "Page",
-  filePathPattern: `pages/**/*.mdx`,
-  contentType: "mdx",
-  fields: {
-    title: {
-      type: "string",
-      required: true,
-    },
-    description: {
-      type: "string",
-    },
-  },
-  computedFields,
-}))
+// export const Page = defineDocumentType(() => ({
+//   name: "Page",
+//   filePathPattern: `pages/**/*.mdx`,
+//   contentType: "mdx",
+//   fields: {
+//     title: {
+//       type: "string",
+//       required: true,
+//     },
+//     description: {
+//       type: "string",
+//     },
+//   },
+//   computedFields,
+// }))
 
 export const Post = defineDocumentType(() => ({
   name: "Post",
-  filePathPattern: `**/*.mdx`,
+  filePathPattern: `posts/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -55,9 +55,9 @@ const options = {
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Post, Page],
-  mdx: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, options]],
-  },
+  documentTypes: [Post],
+  // mdx: {
+  //   remarkPlugins: [remarkGfm],
+  //   rehypePlugins: [[rehypePrettyCode, options]],
+  // },
 });
