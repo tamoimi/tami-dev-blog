@@ -1,25 +1,33 @@
-import { defineDocumentType, makeSource } from "contentlayer/source-files"
-import rehypePrettyCode from "rehype-pretty-code"
-import remarkGfm from "remark-gfm"
+import { ComputedFields, defineDocumentType, makeSource } from "contentlayer/source-files";
+import rehypePrettyCode from "rehype-pretty-code";
+import remarkGfm from "remark-gfm";
 
+const computedFields: ComputedFields = {
+  slug: {
+    type: "string",
+    resolve: (doc) => `/${doc._raw.flattenedPath}`,
+  },
+  slugAsParams: {
+    type: "string",
+    resolve: (doc) => doc._raw.flattenedPath.split("/").slice(1).join("/"),
+  },
+};
 
-// export const Page = defineDocumentType(() => ({
-//   name: "Page",
-//   filePathPattern: `pages/**/*.mdx`,
-//   contentType: "mdx",
-//   fields: {
-//     title: {
-//       type: "string",
-//       required: true,
-//     },
-//     description: {
-//       type: "string",
-//     },
-//   },
-//   computedFields: {
-//     url: { type: 'string', resolve: (post) => `/posts/${post._raw.flattenedPath}` },
-//   },
-// }))
+export const Page = defineDocumentType(() => ({
+  name: "Page",
+  filePathPattern: `pages/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
+  },
+  computedFields,
+}))
 
 export const Post = defineDocumentType(() => ({
   name: "Post",
@@ -38,21 +46,18 @@ export const Post = defineDocumentType(() => ({
       required: true,
     },
   },
-  computedFields: {
-    url: { type: 'string', resolve: (post) => `/posts/${post._raw.flattenedPath}` },
-  },
-}))
+  computedFields,
+}));
 
 const options = {
-  theme: 'one-dark-pro',
+  theme: "one-dark-pro",
 };
 
 export default makeSource({
-  contentDirPath: "posts",
-  documentTypes: [Post],
+  contentDirPath: "./content",
+  documentTypes: [Post, Page],
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]],
-  }
-})
-
+  },
+});
