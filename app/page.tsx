@@ -1,7 +1,6 @@
 import PostCard from "components/PostCard";
-import { Post, allPosts } from "contentlayer/generated";
-import { compareDesc, format, parseISO } from "date-fns";
-import Link from "next/link";
+import { allPosts } from "contentlayer/generated";
+import { compareDesc } from "date-fns";
 
 export default function Home() {
   const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
@@ -31,3 +30,5 @@ export default function Home() {
     </div>
   );
 }
+
+// solution,
