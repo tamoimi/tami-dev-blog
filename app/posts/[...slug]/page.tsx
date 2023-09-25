@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { allPosts } from "contentlayer/generated";
-
 import { Metadata } from "next";
 import { format, parseISO } from "date-fns";
 import { MdxComponent } from "components/MdxComponent";
+import { useMDXComponent } from "next-contentlayer/hooks";
+import Image from "next/image";
 
 interface PostProps {
   params: {
