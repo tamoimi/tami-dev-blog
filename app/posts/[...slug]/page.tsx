@@ -56,7 +56,6 @@ export default async function PostPage({ params }: any) {
         <time dateTime={post.date} className="mb-1 text-sm text-gray-400">
           {format(parseISO(post.date), "LLLL d, yyyy")}
         </time>
-        {post.description && <p className=" mt-3 text-stone-500 dark:text-slate-200">{post.description}</p>}
       </div>
       <div className="prose mt-16">
         <MdxComponent code={post.body.code} />
