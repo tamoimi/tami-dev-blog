@@ -1,36 +1,33 @@
-import { Post } from "contentlayer/generated";
-import { format, parseISO } from "date-fns";
-import { allPosts } from "contentlayer/generated";
 import { MdxComponent } from "components/MdxComponent";
+import { allQuotes } from "contentlayer/generated";
+import { compareDesc } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 const Quote = () => {
+
   return (
-    <div className="container ">
-      {/* introduction */}
-      <div className="my-10">
-        <h1 className="font-bold mb-5">Posts</h1>
-        <article>
-          <div className="mx-auto">
-            {allPosts.map((post) => (
-              <div key={post.slug}>
-                <div className="mb-8">
-                  <h2 className="mb-1 text-xl hover:text-cyan-600 dark:text-blue-400">{post.title}</h2>
-                  <p className="mb-1 text-stone-600 text-sm">{post.description}</p>
-                  <time dateTime={post.date} className="mb-2 block text-xs text-gray-600">
-                    {format(parseISO(post.date), "LLLL d, yyyy")}
-                  </time>
-                  <div className="prose mt-16">
-                    <MdxComponent code={post.body.code} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </article>
+    <>
+    <h1 className="underline decoration-cyan-600 mb-6 text-center">You can never do anything by half!</h1>
+      <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
+        {allQuotes.map((quote, idx) => (
+          <article
+            key={idx}
+            className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 "
+          >
+            <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{quote.title}</h2>
+            <time dateTime={quote.date} className="text-xs font-normal text-gray-700 dark:text-gray-400">
+              {format(parseISO(quote.date), "LLLL d, yyyy")}
+            </time>
+            {quote.description && (
+              <p className=" text-sm mt-1 text-stone-500 dark:text-slate-200">{quote.description}</p>
+            )}
+            <div className="prose mt-5">
+              <MdxComponent code={quote.body.code} />
+            </div>
+          </article>
+        ))}
       </div>
-      {/* footer section or not will see */}
-      <div className="mx-auto"></div>
-    </div>
+    </>
   );
 };
 export default Quote;
