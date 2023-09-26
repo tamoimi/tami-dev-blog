@@ -22,6 +22,10 @@ export const Quote = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
+    date: {
+      type: "date",
+      required: true,
+    },
     description: {
       type: "string",
     },
@@ -38,26 +42,33 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
-    description: {
-      type: "string",
-    },
     date: {
       type: "date",
       required: true,
     },
+    description: {
+      type: "string",
+    },
+   
   },
   computedFields,
 }));
 
 const options = {
-  theme: "one-dark-pro",
+  // theme: "one-dark-pro",
+  theme: "rose-pine-moon",
+};
+
+const rehypeOptions = {
+  theme: 'slack-dark',
+  keepBackground: true,
 };
 
 export default makeSource({
   contentDirPath: "./content",
   documentTypes: [Post, Quote],
-  // mdx: {
-  //   remarkPlugins: [remarkGfm],
-  //   rehypePlugins: [[rehypePrettyCode, options]],
-  // },
+  mdx: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [[rehypePrettyCode, options]],
+  },
 });
