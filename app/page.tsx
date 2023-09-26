@@ -1,6 +1,7 @@
 import PostCard from "components/PostCard";
 import { allPosts } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
+import Link from "next/link";
 
 export default function Home() {
   const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
@@ -16,8 +17,11 @@ export default function Home() {
         <h2>I&#39;m currently working at Optatum Platform as a Front End developer to grow its payment solution.</h2>
       </main>
       <div className="my-10">
-        <h1 className="font-bold mb-5">Posts</h1>
-        <article>
+        <Link href="/post" className="font-bold  hover:text-cyan-600">
+          Post
+        </Link>
+        {/* posts */}
+        <article className="mt-5">
           <div className="mx-auto">
             {posts.map((post, idx) => (
               <PostCard key={idx} {...post} />
@@ -25,8 +29,8 @@ export default function Home() {
           </div>
         </article>
       </div>
-      {/* footer section or not will see */}
-      <div className="mx-auto"></div>
+      {/* footer */}
+      <footer className="mx-auto"></footer>
     </div>
   );
 }
