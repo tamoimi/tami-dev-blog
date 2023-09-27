@@ -1,14 +1,18 @@
+"use client";
+
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR, Roboto } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
+import { ModeToggle } from "components/ModeToggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const roboto = Roboto({
-  weight: '300',
-  subsets: ['latin'],
-})
+  weight: "300",
+  subsets: ["latin"],
+});
 
 const notoSansKr = Noto_Sans_KR({
   // preload: true, 기본값
@@ -25,7 +29,7 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({children}: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       {/* title */}
@@ -36,23 +40,26 @@ export default function RootLayout({children}: RootLayoutProps) {
       <body
         className={`antialiased min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 ${notoSansKr.className}`}
       >
-        <div className="max-w-2xl mx-auto py-10 px-4 selection:bg-slate-300">
-          <header>
-            <div className="flex items-center justify-between">
-              {/* mode toggle */}
-              <button>mode</button>
-              <nav className="ml-auto text-sm font-medium space-x-6">
-                <Link href="/">Home</Link>
-                <Link href="/about">About</Link>
-                <Link href="/post">Post</Link>
-                <Link href="/quote">quote</Link>
-              </nav>
-            </div>
-          </header>
+        {/* wrap with ThemeProvider */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <div className="max-w-2xl mx-auto py-10 px-4 selection:bg-slate-300 ">
+            <header>
+              <div className="flex items-center justify-between">
+                {/* mode toggle */}
+                <ModeToggle />
+                <nav className="ml-auto text-sm font-medium space-x-6">
+                  <Link href="/">Home</Link>
+                  <Link href="/about">About</Link>
+                  <Link href="/post">Post</Link>
+                  <Link href="/quote">quote</Link>
+                </nav>
+              </div>
+            </header>
 
-          {/* children will be all the pages */}
-          <main className="my-5">{children}</main>
-        </div>
+            {/* children will be all the pages */}
+            <main className="my-5">{children}</main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
