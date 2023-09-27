@@ -4,7 +4,7 @@ date: 2023-08-25
 description: jsonString 데이터 객체로 변환중 에러
 ---
 
-## 수정 전 작업 내용
+### 수정 전 작업 내용
 
 리액트 쿼리로 데이터 배열을 MUI Card 컴포넌트를 사용하여 표시했다. 그리고 각 Card를 클릭하면 데이터의 상세 내용을 볼 수 있는 모달창을 구현했다.
 
@@ -27,11 +27,11 @@ const ModalComponent = ({ detailData, isOpen }: Props) => {
 };
 ```
 
-> 🚨 에러 Uncaught SyntaxError: Unexpected end of JSON input at JSON.parse
+> Uncaught SyntaxError: Unexpected end of JSON input at JSON.parse
 
 jsonString 데이터 형식이 이상한가 싶어 여러번 코드를 수정했었지만.. 결국 문제는..
 
-## 수정 후
+### 수정 후
 
 수정 전 코드에서 파싱 에러가 발생한 이유는 아마도 해당 코드에서 데이터 파싱을 수행하는 시점이 모달이 열릴 때로 설정되어 있지 않아서 였을 것이다. 모달이 열리기 전에 detailData에 데이터가 존재하지 않았거나 유효하지 않았기 때문에 오류가 발생했을 것이다.
 

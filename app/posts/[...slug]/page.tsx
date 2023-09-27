@@ -50,14 +50,14 @@ export default async function PostPage({ params }: any) {
   }
 
   return (
-    <article className="mx-auto max-w-xl py-8 font-medium">
+    <article className="mx-auto max-w-xl py-8 font-medium prose dark:prose-invert">
       <div className="mb-8">
         <p className="text-xl">{post.title}</p>
         <time dateTime={post.date} className="mb-1 text-sm text-gray-400">
           {format(parseISO(post.date), "LLLL d, yyyy")}
         </time>
       </div>
-      <div className="prose mt-16">
+      <div className="my-4">
         <MdxComponent code={post.body.code} />
       </div>
     </article>

@@ -21,7 +21,7 @@ const Quote = () => {
             {quote.description && (
               <p className=" text-sm mt-1 text-stone-500 dark:text-slate-200">{quote.description}</p>
             )}
-            <div className="prose mt-5">
+            <div className="prose mt-5 dark:prose-invert">
               <MdxComponent code={quote.body.code} />
             </div>
           </article>

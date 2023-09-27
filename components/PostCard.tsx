@@ -7,15 +7,12 @@ const PostCard = (post: Post) => {
     <>
       <div className="mb-8">
         <h2 className="mb-1 text-xl">
-          <Link
-            href={post.slug}
-            className=" hover:text-cyan-600 dark:text-blue-400"
-          >
+          <Link href={post.slug} className=" hover:text-cyan-600 dark:hover:text-gray-200 ">
             {post.title}
           </Link>
         </h2>
-        <p className="mb-1 text-stone-600 text-sm">{post.description}</p>
-        <time dateTime={post.date} className="mb-2 block text-xs text-gray-600">
+        <p className="mb-1 text-stone-600 dark:text-stone-300 text-sm">{post.description}</p>
+        <time dateTime={post.date} className="mb-2 block text-xs text-gray-600 dark:text-gray-400">
           {format(parseISO(post.date), "LLLL d, yyyy")}
         </time>
         {/* <div
