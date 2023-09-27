@@ -1,11 +1,9 @@
-"use client";
-
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR, Roboto } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
 import { ModeToggle } from "components/ModeToggle";
+import { ThemeProvider } from "components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
