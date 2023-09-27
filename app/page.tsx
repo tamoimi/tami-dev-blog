@@ -17,7 +17,7 @@ export default function Home() {
         <h2>I&#39;m currently working at Optatum Platform as a Front End developer to grow its payment solution.</h2>
       </main>
       <div className="my-10">
-        <Link href="/post" className="font-bold  hover:text-cyan-600">
+        <Link href="/post" className="font-bold">
           Post
         </Link>
         {/* posts */}
