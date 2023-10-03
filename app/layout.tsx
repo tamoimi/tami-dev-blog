@@ -40,7 +40,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         {/* wrap with ThemeProvider */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="max-w-2xl mx-auto py-10 px-4 selection:bg-slate-300 ">
+          <div className="max-w-2xl mx-auto py-10 px-4 selection:bg-slate-300 dark:selection:bg-slate-800 ">
             <header>
               <div className="flex items-center justify-between">
                 {/* mode toggle */}
