@@ -8,28 +8,34 @@ export function ModeToggle() {
   return (
     <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
       <span className="sr-only">Toggle mode</span>
-      {theme !== "light" ? (
+      {theme !== "dark" ? (
         <svg
-          className="h-5 w-5 "
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          stroke-width="2"
-          stroke="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
           fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-4 h-4"
         >
-          <path stroke="none" d="M0 0h24v24H0z" /> <circle cx="12" cy="12" r="4" />
-          <path d="M3 12h1M12 3v1M20 12h1M12 20v1M5.6 5.6l.7 .7M18.4 5.6l-.7 .7M17.7 17.7l.7 .7M6.3 17.7l-.7 .7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+          />
         </svg>
       ) : (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-4 h-4"
+        >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
           />
         </svg>
       )}
