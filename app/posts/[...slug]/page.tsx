@@ -1,10 +1,9 @@
-import { notFound } from "next/navigation";
-import { allPosts } from "contentlayer/generated";
-import { Metadata } from "next";
-import { format, parseISO } from "date-fns";
+import Comment from "components/Comment";
 import { MdxComponent } from "components/MdxComponent";
-import { useMDXComponent } from "next-contentlayer/hooks";
-import Image from "next/image";
+import { allPosts } from "contentlayer/generated";
+import { format, parseISO } from "date-fns";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 interface PostProps {
   params: {
@@ -59,6 +58,7 @@ export default async function PostPage({ params }: any) {
       </div>
       <div className="my-4">
         <MdxComponent code={post.body.code} />
+        <Comment />
       </div>
     </article>
   );
