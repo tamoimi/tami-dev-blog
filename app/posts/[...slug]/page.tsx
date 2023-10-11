@@ -58,8 +58,8 @@ export default async function PostPage({ params }: any) {
       </div>
       <div className="my-4">
         <MdxComponent code={post.body.code} />
-        <Comment />
       </div>
+      <Comment />
     </article>
   );
 }

@@ -20,7 +20,7 @@ const Comment = () => {
         scriptElem.src = "https://utteranc.es/client.js";
         scriptElem.async = true;
         scriptElem.setAttribute("repo", "tamoimi/tami-dev-blog");
-        scriptElem.setAttribute("issue-term", "title");
+        scriptElem.setAttribute("issue-term", "pathname");
         scriptElem.setAttribute("theme", theme === "dark" ? "github-dark" : "github-light");
         scriptElem.setAttribute("label", "blog-comment");
         scriptElem.crossOrigin = "anonymous";
