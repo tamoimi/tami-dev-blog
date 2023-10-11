@@ -3,6 +3,7 @@ import { MdxComponent } from "components/MdxComponent";
 import { allStudies } from "contentlayer/generated";
 import { format, parseISO } from "date-fns";
 import { Metadata } from "next";
+import { getMDXComponent, useMDXComponent } from "next-contentlayer/hooks";
 import { notFound } from "next/navigation";
 
 interface StudyProps {
@@ -47,6 +48,7 @@ export default async function StudyPage({ params }: any) {
   if (!study) {
     notFound();
   }
+
 
   return (
     <article className="mx-auto max-w-xl py-8 font-medium prose dark:prose-invert">
