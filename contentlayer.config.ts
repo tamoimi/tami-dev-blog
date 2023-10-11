@@ -31,7 +31,7 @@ export const Quote = defineDocumentType(() => ({
     },
   },
   computedFields,
-}))
+}));
 
 export const Post = defineDocumentType(() => ({
   name: "Post",
@@ -49,7 +49,26 @@ export const Post = defineDocumentType(() => ({
     description: {
       type: "string",
     },
-   
+  },
+  computedFields,
+}));
+
+export const Study = defineDocumentType(() => ({
+  name: "Study",
+  filePathPattern: `studies/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    date: {
+      type: "date",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
   },
   computedFields,
 }));
@@ -60,13 +79,13 @@ const options = {
 };
 
 const rehypeOptions = {
-  theme: 'slack-dark',
+  theme: "slack-dark",
   keepBackground: true,
 };
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Post, Quote],
+  documentTypes: [Post, Quote, Study],
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]],
