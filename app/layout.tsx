@@ -49,6 +49,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   <Link href="/">Home</Link>
                   <Link href="/about">About</Link>
                   <Link href="/post">Post</Link>
+                  <Link href="/study">Study</Link>
                   <Link href="/quote">
                     <svg
                       className="h-5 w-5"
