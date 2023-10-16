@@ -53,9 +53,9 @@ export const Post = defineDocumentType(() => ({
   computedFields,
 }));
 
-export const Study = defineDocumentType(() => ({
-  name: "Study",
-  filePathPattern: `studies/**/*.mdx`,
+export const Algorithm = defineDocumentType(() => ({
+  name: "Algorithm",
+  filePathPattern: `algorithms/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
@@ -85,7 +85,7 @@ const rehypeOptions = {
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Post, Quote, Study],
+  documentTypes: [Post, Quote, Algorithm],
   mdx: {
     // remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]],
