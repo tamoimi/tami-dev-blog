@@ -21,7 +21,7 @@ const PostNav = () => {
       </li>
       <li className="mr-2">
         <Link
-          href="/javascript"
+          href="#"
           passHref
           className={`inline-block px-4 py-3 ${
             router === "/javascript" ? "bg-gray-100 dark:bg-gray-800" : ""
@@ -43,7 +43,7 @@ const PostNav = () => {
       </li>
       <li className="mr-2">
         <Link
-          href="/library"
+          href="#"
           passHref
           className={`inline-block px-4 py-3 ${
             router === "/library" ? "bg-gray-100 dark:bg-gray-800" : ""
