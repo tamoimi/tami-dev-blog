@@ -1,6 +1,6 @@
 const About = () => {
   return (
-    <div className="my-10">
+    <div className="my-10 text-base">
       {/* add gif */}
       <div className="m-auto">
         <p className="mb-5">
@@ -9,11 +9,14 @@ const About = () => {
         <p>
           Front End developer, living in everywhere 🌎 <br /> I will meet you very soon!
         </p>
-        <div className="flex space-x-2 mt-6">
-          <button type="button" className="bg-cyan-600 text-teal-50 p-1 rounded-md hover:bg-teal-500 transition-all">
+        <div className="flex space-x-3 mt-6 text-gray-500 dark:text-gray-400 text-sm">
+          <button
+            type="button"
+            className="bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+          >
             <a href="https://github.com/tamoimi">GitHub</a>
           </button>
-          <button className="bg-cyan-600 text-teal-50 p-1 rounded-md  hover:bg-teal-500 transition-all">
+          <button className="bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
             <a href="https://www.linkedin.com/in/tamiortami/">LinkedIn</a>
           </button>
         </div>
