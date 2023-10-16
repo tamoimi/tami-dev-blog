@@ -7,7 +7,7 @@ const PostNav = () => {
   const router = usePathname();
 
   return (
-    <ul className="flex content-center text-xs font-medium text-center text-gray-500 dark:text-gray-400 mb-5">
+    <ul className="flex content-center text-xs font-medium text-center text-gray-500 dark:text-gray-400 mb-10">
       <li className="mr-2">
         <Link
           href="/post"
