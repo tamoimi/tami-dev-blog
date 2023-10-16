@@ -1,5 +1,5 @@
 import PostNav from "components/PostNav";
-import AlgorithmCard from "components/StudyCard";
+import AlgorithmCard from "components/AlgorithmCard";
 import { allAlgorithms } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 
