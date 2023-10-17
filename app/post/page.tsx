@@ -8,7 +8,6 @@ const Posts = () => {
   return (
     <div className="my-10">
      <PostNav />
-
       <article>
         <div className="mx-auto">
           {posts.map((post, idx) => (
