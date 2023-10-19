@@ -6,7 +6,8 @@ const PostCard = (post: Post) => {
   return (
     <>
       {/* need to edit gradient for dark mode*/}
-      <div className="p-2 rounded-md hover:bg-gradient-to-r from-slate-100 via-gray-100 to-neutral-100 dark:hover:bg-orange-400">
+      {/* hover:bg-gradient-to-r from-slate-100 via-gray-100 to-neutral-100 dark:hover:bg-orange-400 */}
+      <div className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-300 ease-in-out dark:hover:bg-gray-800">
         <Link href={post.slug}>
           <h2 className="mb-1 text-xl">{post.title}</h2>
           <p className="mb-1 text-stone-600 dark:text-stone-300 text-sm">{post.description}</p>
