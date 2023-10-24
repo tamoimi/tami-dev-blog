@@ -73,6 +73,26 @@ export const Algorithm = defineDocumentType(() => ({
   computedFields,
 }));
 
+export const JavaScript = defineDocumentType(() => ({
+  name: "JavaScript",
+  filePathPattern: `javascripts/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    date: {
+      type: "date",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
+  },
+  computedFields,
+}));
+
 const options = {
   // theme: "one-dark-pro",
   theme: "rose-pine-moon",
@@ -85,7 +105,7 @@ const rehypeOptions = {
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Post, Quote, Algorithm],
+  documentTypes: [Post, Quote, Algorithm, JavaScript],
   mdx: {
     // remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]],
