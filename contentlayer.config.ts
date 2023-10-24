@@ -94,8 +94,7 @@ export const JavaScript = defineDocumentType(() => ({
 }));
 
 const options = {
-  // theme: "one-dark-pro",
-  theme: "rose-pine-moon",
+  theme: "nord",
 };
 
 const rehypeOptions = {
