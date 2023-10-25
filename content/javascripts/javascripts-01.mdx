@@ -1,9 +1,48 @@
 ---
-title: "test"
+title: "Array.prototype.fill()"
 date: 2023-10-24
-description: test
+description: JavaScript fill() Method
 ---
 
-#### test
+#### fill()
 
-test
+Array 인스턴스의 `fill()` 메서드는 배열의 인덱스 범위 내에 있는 모든 요소를 정적 값으로 변경합니다. 그리고 수정된 배열을 반환합니다.
+
+#### 예제
+
+```js
+const array1 = [1, 2, 3, 4];
+
+// Fill with 0 from position 2 until position 4
+console.log(array1.fill(0, 2, 4));
+// Expected output: Array [1, 2, 0, 0]
+
+// Fill with 5 from position 1
+console.log(array1.fill(5, 1));
+// Expected output: Array [1, 5, 5, 5]
+
+console.log(array1.fill(6));
+// Expected output: Array [6, 6, 6, 6]
+```
+
+#### 구문
+
+```js
+fill(value);
+fill(value, start);
+fill(value, start, end);
+```
+
+#### 매개변수
+
+- `value`
+  - 배열을 채울 값입니다. 배열의 모든 요소는 정확히 이 값이 될 것입니다. value가 객체인 경우, 배열의 각 슬롯은 해당 객체를 참조합니다.
+- `start` : **채우기를 시작할 0 기반 인덱스로, 정수로 변환됩니다.**
+  - 음수 인덱스는 배열의 끝부터 거꾸로 셉니다. start < 0인 경우, start + array.length가 사용됩니다.
+  - start < -array.length 또는 start가 생략된 경우, 0이 사용됩니다.
+  - start >= array.length이면, 아무 인덱스도 채워지지 않습니다.
+- `end` : **채우기를 끝낼 0 기반 인덱스로, 정수로 변환됩니다. fill()은 end까지 채우며, end는 포함하지 않습니다.**
+  - 음수 인덱스는 배열의 끝부터 거꾸로 셉니다. end < 0인 경우, end + array.length가 사용됩니다.
+  - end < -array.length 이면, 0이 사용됩니다.
+  - end >= array.length 이거나 end가 생략된 경우, array.length가 사용되어 끝까지 모든 인덱스가 채워집니다.
+  - end가 정수로 변환된 후, after보다 앞에 위치하면, 아무 인덱스도 채워지지 않습니다.
