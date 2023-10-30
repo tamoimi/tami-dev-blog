@@ -14,7 +14,7 @@ const PostNav = () => {
           passHref
           className={`inline-block px-4 py-3 ${
             router === "/post" ? "bg-gray-100 dark:bg-gray-800" : ""
-          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white transition-colors duration-300 ease-in-out`}
+          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white `}
         >
           Post
         </Link>
@@ -25,7 +25,7 @@ const PostNav = () => {
           passHref
           className={`inline-block px-4 py-3 ${
             router === "/javascript" ? "bg-gray-100 dark:bg-gray-800" : ""
-          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white transition-colors duration-300 ease-in-out`}
+          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white `}
         >
           JavaScript
         </Link>
@@ -36,7 +36,7 @@ const PostNav = () => {
           passHref
           className={`inline-block px-4 py-3  ${
             router === "/algorithm" ? "bg-gray-100 dark:bg-gray-800" : ""
-          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white transition-colors duration-300 ease-in-out`}
+          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white `}
         >
           Algorithm
         </Link>
@@ -47,7 +47,7 @@ const PostNav = () => {
           passHref
           className={`inline-block px-4 py-3 ${
             router === "/library" ? "bg-gray-100 dark:bg-gray-800" : ""
-          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white transition-colors duration-300 ease-in-out`}
+          } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white `}
         >
           Library
         </Link>
