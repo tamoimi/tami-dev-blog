@@ -93,6 +93,26 @@ export const JavaScript = defineDocumentType(() => ({
   computedFields,
 }));
 
+export const Study = defineDocumentType(() => ({
+  name: "Study",
+  filePathPattern: `studies/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    date: {
+      type: "date",
+      required: true,
+    },
+    description: {
+      type: "string",
+    },
+  },
+  computedFields,
+}));
+
 const options = {
   theme: "nord",
 };
@@ -104,7 +124,7 @@ const rehypeOptions = {
 
 export default makeSource({
   contentDirPath: "./content",
-  documentTypes: [Post, Quote, Algorithm, JavaScript],
+  documentTypes: [Post, Quote, Algorithm, JavaScript, Study],
   mdx: {
     // remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]],
