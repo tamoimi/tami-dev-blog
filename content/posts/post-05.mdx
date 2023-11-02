@@ -1,0 +1,31 @@
+---
+title: "[HTML] form 기본 유효성 검사 비활성화 하기"
+date: 2023-04-17
+description: Disable validation of HTML5 form elements
+---
+
+#### 문제
+
+`form`을 생성해 만들어 둔 에러 메시지를 보여주려고 했지만, form 제출 시에 아래 이미지와 같이 html의 경고창이 띄워졌다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/a498b950-bbd1-4195-9d98-b8235c77a430)
+
+#### 문제해결
+
+`form` 태그에 noValidate를 추가한다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/e26868a4-07e9-4f31-b662-43236ae2bb43)
+
+#### form 태그의 novalidate 속성
+
+`form` 태그의 novalidate 속성은 폼 데이터(form data)를 서버로 제출할 때 해당 데이터의 유효성을 검사하지 않음을 명시한다.  
+novalidate 속성은 불리언(boolean) 속성이다. 불리언 속성은 해당 속성을 명시하지 않으면 속성값이 자동으로 `false` 값을 가지게 되며, 명시하면 자동으로 `true` 값을 가지게 된다.
+
+#### 예제
+
+```js
+<form novalidate>
+    이메일 주소 : <input type="email" name="user-email">
+    <input type="submit">
+</form>
+```
