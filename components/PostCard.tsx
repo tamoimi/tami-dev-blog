@@ -24,5 +24,3 @@ const PostCard = (post: Post) => {
   );
 };
 export default PostCard;
-
-// bg-gradient-to-r from-slate-100 via-gray-100 to-neutral-100
