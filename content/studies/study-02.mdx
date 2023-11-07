@@ -1,0 +1,224 @@
+---
+title: "[React] Importing and Exporting Components"
+date: 2023-11-07
+description: Importing and Exporting Components - 컴포넌트 가져오기 및 내보내기
+---
+
+#### 참고 문서
+
+[Importing and Exporting Components – React](https://react.dev/learn/importing-and-exporting-components)
+
+#### Overview
+
+컴포넌트의 마법은 그들의 재사용 가능성에 있다: 다른 컴포넌트로 구성된 컴포넌트를 만들수 있다.하지만 컴포넌트를 계속 중첩하게 되면, 자주 다른 파일로 분리해야 하는 시점이 생긴다. 이렇게 분리하면 나중에 파일을 찾기 더 쉽고 재사용하기 편리하다.
+
+#### 학습 내용
+
+- Root 컴포넌트 파일이란?
+- 컴포넌트를 가져오고 내보내는 방법
+- Default 및 이름 있는 가져오기/내보내기를 사용해야 하는 경우
+- 하나의 파일에서 여러 컴포넌트를 가져오기/내보내기 하는 방법
+- 컴포넌트를 여러 파일로 분할하는 방법
+
+---
+
+#### 루트 컴포넌트 파일
+
+첫번째 컴포넌트에서 만든 Profile 컴포넌트와 Gallery 컴포넌트는 아래와 같이 렌더링 된다:
+
+```jsx
+function Profile() {
+  return <img src="https://i.imgur.com/MK3eW3As.jpg" alt="Katherine Johnson" />;
+}
+
+export default function Gallery() {
+  return (
+    <section>
+      <h1>Amazing scientists</h1>
+      <Profile />
+      <Profile />
+      <Profile />
+    </section>
+  );
+}
+```
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/b3cd37b3-ec0f-4988-9425-63f3aa0d19c7)
+이 예제에서 컴포넌트들은 현재 App.js 라는 루트 컴포넌트 파일에 존재한다. Create React App 에서 앱 전체는 src/App.js에 실행된다. 우리가 어떻게 설정을 하냐에 따라 루트 컴포넌트는 다른 파일에 위치할 수 있다. Next.js와 같은 파일 기반 라우팅 프레임워크를 사용하는 경우, 루트 컴포넌트는 페이지별로 다를 수 있다.
+
+---
+
+#### 컴포넌트 내보내기 및 가져오기
+
+만약 나중에 랜딩 화면을 변경해서 과학 도서 목록을 넣으려면 어떻게 해야 할까? 아니면 만약 모든 프로필을 다른 곳에 배치하고 싶다면? `Gallery`와 `Profile`을 root 컴포넌트 파일 밖으로 옮기는 것이 좋다. 이렇게 하면 모듈성이 강화되고 다른 파일에서 재사용할 수 있게 된다.
+
+컴포넌트는 다음 세 단계로 이동할 수 있다:
+
+1. 컴포넌트에 넣을 새로운 JS 파일을 **생성**한다.
+2. 그 파일에서 함수 컴포넌트를 **내보내기** 한다. ([default](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/export#using_the_default_export) 또는 [named](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/export#using_named_exports) exports를 사용한다.)
+3. 컴포넌트를 사용할 파일에서 **가져온다**. ([default](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/import#importing_defaults) 또는 [named](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/import#import_a_single_export_from_a_module) exports에 일치하는 방식으로 import 한다.)
+
+`Profile` 과 `Gallery` 는 모두 `App.js` 에서 `Gallery.js` 라는 새 파일로 옮겨졌다. 이제 `App.js`를 변경하여 `Gallery.js`에서 `Gallery`를 가져올 수 있다:
+
+    ```jsx
+    import Gallery from './Gallery.js';
+
+    export default function App() {
+      return (
+        <Gallery />
+      );
+    }
+    ```
+
+```jsx
+function Profile() {
+  return <img src="https://i.imgur.com/QIrZWGIs.jpg" alt="Alan L. Hart" />;
+}
+
+export default function Gallery() {
+  return (
+    <section>
+      <h1>Amazing scientists</h1>
+      <Profile />
+      <Profile />
+      <Profile />
+    </section>
+  );
+}
+```
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/54126efd-aaf8-4e78-813d-b709a13df84e)
+이 예제가 두 개의 컴포넌트 파일로 어떻게 분리되었는지 확인하자:
+
+1. `Gallery.js` :
+   - 같은 파일 내에서만 사용하고 내보내지 않는 `Profile` 컴포넌트를 정의한다.
+   - `Gallery` 컴포넌트를 **기본 내보내기**로 내보낸다.
+2. `App.js`:
+   - `Gallery`를 `Gallery.js`로부터 **기본 가져오기**로 가져온다.
+   - 루트 `App` 컴포넌트를 **기본 내보내기**로 내보낸다.
+
+---
+
+#### 📃 Note
+
+가끔 `. js`와 같은 파일 확장자가 없을 때도 있다.
+
+```jsx
+import Gallery from "./Gallery";
+```
+
+`'./Gallery.js'` 나 `'./Gallery'` 모두 React에선 작동하지만 이 경우 [ES Modules](https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules) 사용 방법에 더 가깝다.
+
+---
+
+#### 🐳 DEEP DIVE
+
+**Default vs Named exports**
+
+JavaScript 로 값을 내보내는 두 가지 방법이 있다: **default export와 named export.**
+
+지금까지 우리의 예제에선 default exports 만 사용했다. 하지만 두 방법 다 한 파일에서 사용할 수 있다. 한 파일에서는 하나이상의 **_default_ export를 가질 수 없고 _named_ exports는 여러 개가 존재할 수 있다.**
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/9b25cdf6-758e-4400-9d50-e2938a7c95a1)
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/9f2770bb-72cb-448e-8ef1-fb3a088a5cfe)
+
+default import를 작성할 때, 어떤 이름이나 `import`뒤에 넣을 수 있다. 예를 들어, `import Banana from './button.js'` 라고 쓰더라도 같은 default export 값을 가져오게 된다. 반대로 named import를 사용할 때는 양쪽 파일에서 사용하고자 하는 값의 이름이 같아야 해서 named import라고 불린다!
+
+**보통 한 파일에서 하나의 컴포넌트만 export 할 때 default exports를 사용하고 여러 컴포넌트를 export할 경우 named export를 사용한다. \*\***어떤 방식을 사용하든 컴포넌트와 파일들의 이름을 의미있게 짓는 것은 중요하다. `export default () => {}` 처럼 이름 없는 컴포넌트는 나중에 디버깅하기 어렵기 때문에 권장하지 않는다.
+
+---
+
+#### 같은 파일로 부터 여러 개의 컴포넌트를 내보내기 및 가져오기
+
+만약 gallery 대신 하나의 `Profile`만 보여주고 싶다면 어떻게 할 수 있을까? `Profile`컴포넌트도export할 수 있다. 하지만 `Gallery.js`는 이미 default export가 있고 두 개의 default exports를 가질수는 없다. 새 파일을 만들어 default export 하거나, 혹은`Profile`에서 named export를 추가할 수도도 있다. **한 파일은 default export를 하나만 가질 수 있지만, named export는 여러 개 가질 수 있다!**
+
+#### 📃 Note
+
+default 와 named exports의 혼동을 줄이기 위해, 일부 팀에서는 한 가지 스타일(default 또는 named)만 고수하거나, 단일 파일 내에서 혼합하지 않도록 선택한다. 자신에게 가장 적합한 방식을 선택하자!
+
+1. named export를 사용해서 `Gallery.js`에서 `Profile`를 **export** 한다. (`default` 키워드를 사용하지 않는다):
+
+   ```jsx
+   export function Profile() {
+     // ...
+   }
+   ```
+
+2. named import으로 `Gallery.js`에서 `Profile`를 `App.js` 파일로 **import** 한다. (중괄호를 사용한다):
+
+   ```jsx
+   import { Profile } from "./Gallery.js";
+   ```
+
+3. `<Profile />`을 `App` 컴포넌트에서 **렌더링한다**:
+
+   ```jsx
+   export default function App() {
+     return <Profile />;
+   }
+   ```
+
+이제 `Gallery.js`는 두 개의 exports를 포함하고 있다: default `Gallery` export와 named `Profile` export. `App.js`는 둘 다 import 한다. 아래의 예제에서 `<Profile />`과 `<Gallery />`를 교차해서 사용해 보자:
+
+```jsx
+import Gallery from "./Gallery.js";
+import { Profile } from "./Gallery.js";
+
+export default function App() {
+  return <Profile />;
+}
+```
+
+```jsx
+export function Profile() {
+  return <img src="https://i.imgur.com/QIrZWGIs.jpg" alt="Alan L. Hart" />;
+}
+
+export default function Gallery() {
+  return (
+    <section>
+      <h1>Amazing scientists</h1>
+      <Profile />
+      <Profile />
+      <Profile />
+    </section>
+  );
+}
+```
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/82cee5e8-2067-4bd6-b7a1-1a1a840458a8)
+
+```jsx
+import Gallery from "./Gallery.js";
+import { Profile } from "./Gallery.js";
+
+export default function App() {
+  return (
+    <>
+      <Profile />
+      <Gallery />
+    </>
+  );
+}
+```
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/7f15fdb6-58e1-4d06-91b0-745b4d499de0)
+
+이제 default와 named export 방식 둘 다 사용할 수 있다:
+
+- `Gallery.js`:
+  - `Profile` 컴포넌트를 `Profile`로 **named export** 한다.
+  - `Gallery` 컴포넌트를 **default export** 한다.
+- `App.js`:
+  - `Gallery.js`에서 `Profile`를 `Profile`로 **named import** 한다.
+  - `Gallery.js`에서 `Gallery`를 **default import** 한다.
+  - root `App` 컴포넌트를 **default export** 한다.
+
+---
+
+#### 요약
+
+- 루트 컴포넌트 파일이란
+- 컴포넌트를 내보내고 가져오는 방법
+- 언제, 어떻게 default 및 named import, default 및 named export를 사용하는지
+- 한 파일에서 여러 컴포넌트를 export 하는 방법
