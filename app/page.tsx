@@ -1,10 +1,15 @@
+"use client";
+
 import PostCard from "components/PostCard";
 import { allPosts } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Home() {
+  const router = usePathname();
   const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+
   return (
     <div className="container ">
       {/* introduction */}
@@ -23,10 +28,19 @@ export default function Home() {
         {/* posts */}
         <article className="mt-5">
           <div className="mx-auto">
-            {posts.map((post, idx) => (
+            {posts.slice(0, 5).map((post, idx) => (
               <PostCard key={idx} {...post} />
             ))}
           </div>
+          <Link
+            href="/post"
+            passHref
+            className={`inline-block px-4 py-2 ${
+              router === "/post" ? "bg-gray-100 dark:bg-gray-800" : ""
+            } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white `}
+          >
+            more
+          </Link>
         </article>
       </div>
       {/* footer */}
@@ -34,5 +48,3 @@ export default function Home() {
     </div>
   );
 }
-
-// solution,
