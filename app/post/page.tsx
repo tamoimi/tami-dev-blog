@@ -7,7 +7,7 @@ const Posts = () => {
   const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
   return (
     <div className="my-10">
-     <PostNav />
+      <PostNav />
       <article>
         <div className="mx-auto">
           {posts.map((post, idx) => (
