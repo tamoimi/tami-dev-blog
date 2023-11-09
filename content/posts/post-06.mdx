@@ -1,0 +1,94 @@
+---
+title: "Kakao 주소 api 사용법"
+date: 2023-11-09
+description: How to use Kakao address API
+---
+
+#### 참고
+
+[카카오 우편번호 서비스](https://postcode.map.daum.net/guide)
+
+#### 설치
+
+```jsx
+npm install react-daum-postcode
+```
+
+#### 사용방법
+
+```jsx
+import * as React from "react";
+import DaumPostcodeEmbed from "react-daum-postcode";
+
+const App = (): JSX.Element => {
+  /**
+   * useState
+   */
+  const [openPostcode, setOpenPostcode] = React.useState < boolean > false;
+
+  /**
+   * handler
+   */
+  const handle = {
+    // 버튼 클릭 이벤트
+    clickButton: () => {
+      setOpenPostcode((current) => !current);
+    },
+
+    // 주소 선택 이벤트
+    selectAddress: (data: any) => {
+      console.log(`
+                주소: ${data.address},
+                우편번호: ${data.zonecode}
+            `);
+      setOpenPostcode(false);
+    },
+  };
+
+  return (
+    <div>
+      <button onClick={handle.clickButton}>toggle</button>
+
+      {openPostcode && (
+        <DaumPostcodeEmbed
+          onComplete={handle.selectAddress} // 값을 선택할 경우 실행되는 이벤트
+          autoClose={false} // 값을 선택할 경우 사용되는 DOM을 제거하여 자동 닫힘 설정
+          defaultQuery="판교역로 235" // 팝업을 열때 기본적으로 입력되는 검색어
+        />
+      )}
+    </div>
+  );
+};
+
+export default App;
+```
+
+#### 문제해결
+
+💥자! 여기서 오늘의 문제
+
+- 버튼 `onClick`시 모달창을 열면서 api도 같이 불러오고 싶었다 ⇒ 성공 but!
+  - 현재 진행중인 프로젝트에 또 다른 스텝에서도 주소 api를 사용하게 되기 때문에 컴포넌트로 만드는게 좋았는데
+  - **내가 생각했던 로직 → 모달 컴포넌트를 만들어서 데이터를 부모 컴포넌트로 넘겨야지**
+  - props전달 시 부모→ 자식으로 전달하며 자식은 모달을 여는권한이 없다!
+
+```jsx
+//Step1.jsx
+
+const Step1 = ({ setCurrentStepProp }) => {
+  const [openPostCode, setOpenPostCode] = useState(false);
+
+const openPostCodeModal = () => {
+    setOpenPostCode(true);
+  };
+
+// *여기서 state를 선언해주고 PostCode로 props를 받는다!!!!!
+```
+
+```jsx
+//PostCode.jsx
+
+const PostCode = ({ openPostCode, setOpenPostCode }) => {
+  //useState
+  const handleClose = () => setOpenPostCode(false);
+```
