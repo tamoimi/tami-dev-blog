@@ -1,0 +1,100 @@
+---
+title: "[Algorithm] 주사위 게임 1"
+date: 2023-11-10
+description: 주사위 게임 1
+---
+
+#### 문제 설명
+
+1부터 6까지 숫자가 적힌 주사위가 두 개 있습니다. 두 주사위를 굴렸을 때 나온 숫자를 각각 a, b라고 했을 때 얻는 점수는 다음과 같습니다.
+
+- a와 b가 모두 홀수라면 a^ + b^ 점을 얻습니다.
+- a와 b 중 하나만 홀수라면 2 × (a + b) 점을 얻습니다.
+- a와 b 모두 홀수가 아니라면 |a - b| 점을 얻습니다.
+  두 정수 a와 b가 매개변수로 주어질 때, 얻는 점수를 return 하는 solution 함수를 작성해 주세요.
+
+#### 제한 사항
+
+- a와 b는 1 이상 6 이하의 정수입니다.
+
+#### 입출력 예
+
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            a
+          </th>
+          <th scope="col" class="px-6 py-3">
+            b
+          </th>
+          <th scope="col" class="px-6 py-3">
+            result
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b dark:bg-gray-800 dark:border-gray-700">
+          <td class="px-6 py-4">3</td>
+          <td class="px-6 py-4">5</td>
+          <td class="px-6 py-4">34</td>
+        </tr>
+        <tr class="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+          <td class="px-6 py-4">6</td>
+          <td class="px-6 py-4">1</td>
+          <td class="px-6 py-4">14</td>
+        </tr>
+          <tr class="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+          <td class="px-6 py-4">2</td>
+          <td class="px-6 py-4">4</td>
+          <td class="px-6 py-4">2</td>
+        </tr>
+      </tbody>
+    </table>
+
+#### 입출력 예 설명
+
+- 입출력 예 #1
+
+  - 예제 1번에서 두 주사위 숫자가 모두 홀수이므로 3^ + 5^ = 9 + 25 = 34점을 얻습니다. 따라서 34를 return 합니다.
+
+- 입출력 예 #2
+
+  - 예제 2번에서 두 주사위 숫자 중 하나만 홀수이므로 2 × (6 + 1) = 2 × 7 = 14점을 얻습니다. 따라서 14를 return 합니다.
+
+- 입출력 예 #3
+
+  - 예제 3번에서 두 주사위 숫자가 모두 홀수가 아니므로 |2 - 4| = |-2| = 2점을 얻습니다. 따라서 2를 return 합니다.
+
+#### 나의 풀이 방법
+
+```js
+function solution(a, b) {
+  if (a % 2 === 1 && b % 2 === 1) {
+    return a ** 2 + b ** 2;
+  } else if (a % 2 === 0 && b % 2 === 0) {
+    return Math.abs(a - b);
+  } else return 2 * (a + b);
+}
+```
+
+- 입출력 예를 따라서 조건에 따라 다른 값은 반환했다. 거듭제곱(\*\*)연산자는 왼쪽 피연산자를 밑, 오른쪽 피연산자를 지수로 한 값을 구하고 `Math.asb`는 음수를 양수로 반환한다.
+
+#### Math.abs()
+
+- `Math.abs()` 함수는 주어진 숫자의 절대값을 반환합니다. `x`가 양수이거나 0이라면 `x`를 리턴하고, `x`가 음수라면 `x`의 반대값, 즉 양수를 반환합니다.
+
+#### 예제
+
+```js
+Math.abs("-1"); // 1
+Math.abs(-2); // 2
+Math.abs(null); // 0
+Math.abs(""); // 0
+Math.abs([]); // 0
+Math.abs([2]); // 2
+Math.abs([1, 2]); // NaN
+Math.abs({}); // NaN
+Math.abs("string"); // NaN
+Math.abs(); // NaN
+```
