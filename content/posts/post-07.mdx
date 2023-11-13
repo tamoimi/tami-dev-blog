@@ -1,0 +1,95 @@
+---
+title: "HTML, CSS를 사용한 간단한 풀페이지 스크린 만들기"
+date: 2023-11-13
+description: How to make awesome full page scroll effect using html & css.
+---
+
+#### 구현 방법
+
+- index.html
+
+```js
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css">
+  </link>
+</head>
+
+<body>
+  <div class="container">
+    <section id="page_01" class="one">
+      <h1>First page</h1>
+    </section>
+    <section id="page_02" class="two">
+      <h1>Second page</h1>
+    </section>
+    <section id="page_03" class="three">
+      <h1>Third page</h1>
+    </section>
+    <section id="page_04" class="four">
+      <h1>Web Dev</h1>
+    </section>
+  </div>
+
+</body>
+
+</html>
+```
+
+페이지 내용을 감싸는 컨데이너에 총 3개의 class 이름이 다른 섹션을 추가한다.
+
+- index.css
+
+```js
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.container {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh;
+}
+
+section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+}
+
+h1 {
+  color: white;
+  text-shadow: 1px 1px 4px #000;
+}
+
+.one {
+  background-color: beige;
+}
+.two {
+  background-color: red;
+}
+.three {
+  background-color: blue;
+}
+.four {
+  background-color: green;
+}
+```
+
+`.container`의 `scroll-snap-type: y mandatory`는 y축으로 snap position을 지정하고 스크롤 위치가 스냅 위치와 정확히 일치해야만 스냅한다.
+
+`section`의 뷰포트 높이는 100%으로 설정하여 전체 화면을 차지 하도록 한다. `scroll-snap-align: start;` 옵션으로 스크롤 스냅 위치를 snap area 시작 부분에 맞추도록 지정한다.
+
+#### 화면 결과
+
+![2023-11-13 14 02 03](https://github.com/tamoimi/tami-dev-blog/assets/100749520/b6010ffa-4dcc-408a-a188-a13b9ae66768)
