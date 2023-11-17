@@ -19,7 +19,13 @@ export default function Home() {
           I&#39;m a Front End developer based in South Korea. I&#39;m passion for creating visually stunning and
           user-friendly websites.
         </h2>
-        <h2>I&#39;m currently working at Optatum Platform as a Front End developer to grow its payment solution.</h2>
+        <h2>
+          I&#39;m currently working at{" "}
+          <a href="https://www.optatumplatform.com/" className="hover:underline">
+            Optatum Platform
+          </a>{" "}
+          as a Front End developer to grow its payment solution.
+        </h2>
       </main>
       <div className="my-10">
         <Link href="/post" className="font-bold">
