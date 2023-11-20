@@ -1,0 +1,128 @@
+---
+title: "[Learn Next.js] 1. Getting Started"
+date: 2023-11-20
+description: Learn Next.js - Getting Started
+---
+
+#### 참고 문서
+
+[Getting Started – Next](https://nextjs.org/learn/dashboard-app/getting-started)
+
+#### 새로운 프로젝트 생성
+
+Next.js 앱을 생성하기 위해, 터미널을 열고 프로젝트를 보관하려는 폴더로 이동한 후 아래 명령어를 실행하자:
+
+```jsx
+// Terminal
+npx create-next-app@latest nextjs-dashboard --use-npm --example "https://github.com/vercel/next-learn/tree/main/dashboard/starter-example"
+```
+
+이 명령은 Next.js 애플리케이션을 설정하는 CLI(명령줄 인터페이스) 도구인 `create-next-app`을 사용한다. 위 명령에서는 이 과정의 [시작 예제](https://github.com/vercel/next-learn/tree/main/dashboard/starter-example)와 함께 `--example` 플래그도 사용하고 있다.
+
+#### 프로젝트 탐색
+
+처음부터 코드를 작성하는 튜토리얼과 달리 이 과정의 코드 대부분은 이미 작성되어있다. 이는 기존 코드베이스를 사용하여 작업하게 될 실제 개발을 더 잘 반영한다.
+
+우리의 목표는 모든 애플리케이션 코드를 작성하지 않고도 Next.js의 주요 기능을 배우는 데 집중할 수 있도록 돕는 것이다.
+
+설치 후 코드 편집기에서 프로젝트를 열고 `nextjs-dashboard`로 이동하자.
+
+```jsx
+// Terminal
+cd nextjs-dashboard
+```
+
+잠시 시간을 내어 프로젝트를 살펴보자.
+
+#### 폴더 구조
+
+프로젝트 폴더의 구조는 아래와 같다:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/79a86e4f-2af9-4001-88b3-2e48037db4e9)
+
+- **`/app`**: 애플리케이션에 대한 모든 경로, 컴포넌트 그리고 로직이 포함되어 있다. 주로 여기서 작업을 하게 된다.
+- **`/app/lib`**: 재사용 가능한 유틸리티 함수, 데이터 페칭 함수 등 애플리케이션에서 사용되는 함수가 포함되어 있다.
+- **`/app/ui`**: 카드, 테이블, 양식 등 애플리케이션의 모든 UI 컴포넌트가 포함되어 있다. 시간을 절약하기 위해 이러한 컴포넌트의 스타일이 미리 지정되어 있다.
+- **`/public`**: 이미지와 같은 애플리케이션의 모든 정적 에셋을 포함한다.
+- **`/script`**: 이후 챕터에서 데이터베이스를 채우는 데 사용할 시드 스크립트가 포함되어 있다.
+- **Config Files**: `next.config.js`와 같은 구성 파일이 애플리케이션 루트에 있는 것을 볼 수 있다. 이러한 파일의 대부분은 `create-next-app`을 사용하여 새 프로젝트를 시작할 때 생성되고 사전 구성된다. 이 과정에서는 수정할 필요가 없다.
+
+이 폴더를 자유롭게 탐색해 보자. 코드가 수행하는 모든 작업을 아직 이해하지 못하더라도 걱정하지 말자. 🦕
+
+#### 플레이스홀더 데이터
+
+사용자 인터페이스를 구축할 때 플레이스홀더 데이터가 있으면 도움이 된다. 데이터베이스나 API를 아직 사용할 수 없는 경우 아래 방법을 사용할 수 있다:
+
+- JSON 형식 또는 JavaScript 개체로 플레이스홀더 데이터를 사용
+- [mockAPI](https://mockapi.io/)와 같은 타사 서비스를 사용
+
+이 프로젝트에서는 `app/lib/placeholder-data.js`에 일부 플레이스홀더 데이터를 제공했다. 파일의 각 JavaScript 개체는 데이터베이스의 테이블을 나타낸다. 예를 들어 송장 테이블은 아래와 같이 확인할 수 있다:
+
+`/app/lib/placeholder-data.js`
+
+```jsx
+const invoices = [
+  {
+    customer_id: customers[0].id,
+    amount: 15795,
+    status: "pending",
+    date: "2022-12-06",
+  },
+  {
+    customer_id: customers[1].id,
+    amount: 20348,
+    status: "pending",
+    date: "2022-11-14",
+  },
+  // ...
+];
+```
+
+[데이터베이스 설정 챕터](https://nextjs.org/learn/dashboard-app/setting-up-your-database)에서는 이 데이터를 사용하여 데이터베이스를 시드한다(일부 초기 데이터로 채운다).
+
+#### TypeScript
+
+또한 대부분의 파일에는 `.ts` 또는 `.tsx` 접미사가 있음을 알 수 있다. 이유는 프로젝트가 TypeScript로 작성되었기 때문이다.
+
+TypeScript를 모르더라도 괜찮다. 필요한 경우 TypeScript 코드 조각을 제공할 것이다.
+
+지금은 `/app/lib/definitions.ts`파일을 살펴보자. 여기서는 데이터베이스에서 반환될 유형을 수동으로 정의한다. 예를 들어 송장 테이블에는 아래와 같은 유형이 있다:
+
+`/app/lib/definitions.ts`
+
+```jsx
+export type Invoice = {
+  id: string,
+  customer_id: string,
+  amount: number,
+  date: string,
+  // In TypeScript, this is called a string union type.
+  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
+  status: "pending" | "paid",
+};
+```
+
+TypeScript를 사용하면 송장 금액에 숫자 대신 문자열을 전달하는 것과 같이 실수로 구성 요소나 데이터베이스에 잘못된 데이터 형식을 전달하지 않도록 할 수 있다.
+
+💡 **TypeScript 개발자인 경우:**
+
+- 데이터 유형을 수동으로 선언하고 있지만 더 나은 유형 안전성을 위해 데이터베이스 schema를 기반으로 유형을 자동으로 생성하는 [Prisma](https://www.prisma.io/) 를 권장한다.
+- Next.js는 프로젝트에서 TypeScript를 사용하는지 감지하고 필요한 패키지와 구성을 자동으로 설치한다. Next.js에는 코드 편집기용 [TypeScript plugin](https://nextjs.org/docs/app/building-your-application/configuring/typescript#typescript-plugin)도 함께 제공되어 자동 완성 및 유형 안전성을 지원한다.
+
+#### 개발 서버 실행
+
+`npm i`를 실행시켜 프로젝트 패키지를 설치하자.
+
+```jsx
+// Terminal
+npm i
+```
+
+그리고 `npm run dev`로 개발서버를 시작하자.
+
+```jsx
+// Terminal
+npm run dev
+```
+
+`npm run dev`는 포트 `3000`에서 Next.js 개발 서버를 시작한다. 브라우저에서 [http://localhost:3000](http://localhost:3000/)을 열자. 홈 페이지는 아래와 같아야 한다:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/a1b583de-9f70-4646-a71d-1a1d7050ad59)
