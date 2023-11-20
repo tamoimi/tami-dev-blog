@@ -8,11 +8,15 @@ description: Learn Next.js - CSS Styling
 
 [CSS Styling – Next](https://nextjs.org/learn/dashboard-app/css-styling)
 
+---
+
 💡 **In this chapter…**
 
 - 애플리케이션에 전역(global) CSS 파일을 추가하는 방법
 - 두 가지 방법의 스타일링: Tailwind와 CSS 모듈
 - `clsx`유틸리티 패키지를 사용해 조건부로 class 이름 추가하는 방법
+
+---
 
 #### Global styles
 
@@ -49,6 +53,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 @tailwind components;
 @tailwind utilities;
 ```
+
+---
 
 #### Tailwind
 
@@ -129,6 +135,8 @@ import styles from '@/app/ui/home.module.css';
 
 Tailwind 및 CSS 모듈은 Next.js 애플리케이션 스타일을 지정하는 가장 일반적인 두 가지 방법이다. 둘 중 하나를 사용하는지 여부는 선호의 문제다. 동일한 애플리케이션에서 두 가지를 모두 사용할 수도 있다.
 
+---
+
 #### clsx 라이브러리
 
 상태나 다른 조건에 따라 요소의 스타일을 조건부로 지정해야 하는 경우가 있을 수 있다.
@@ -158,6 +166,8 @@ export default function InvoiceStatus({ status }: { status: string }) {
     // ...
 )}
 ```
+
+---
 
 #### 다른 스타일 해결 방법
 

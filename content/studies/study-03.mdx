@@ -1,12 +1,14 @@
 ---
 title: "[Learn Next.js] 1. Getting Started"
-date: 2023-11-20
+date: 2023-11-19
 description: Learn Next.js - Getting Started
 ---
 
 #### 참고 문서
 
 [Getting Started – Next](https://nextjs.org/learn/dashboard-app/getting-started)
+
+---
 
 #### 새로운 프로젝트 생성
 
@@ -18,6 +20,8 @@ npx create-next-app@latest nextjs-dashboard --use-npm --example "https://github.
 ```
 
 이 명령은 Next.js 애플리케이션을 설정하는 CLI(명령줄 인터페이스) 도구인 `create-next-app`을 사용한다. 위 명령에서는 이 과정의 [시작 예제](https://github.com/vercel/next-learn/tree/main/dashboard/starter-example)와 함께 `--example` 플래그도 사용하고 있다.
+
+---
 
 #### 프로젝트 탐색
 
@@ -34,6 +38,8 @@ cd nextjs-dashboard
 
 잠시 시간을 내어 프로젝트를 살펴보자.
 
+---
+
 #### 폴더 구조
 
 프로젝트 폴더의 구조는 아래와 같다:
@@ -47,6 +53,8 @@ cd nextjs-dashboard
 - **Config Files**: `next.config.js`와 같은 구성 파일이 애플리케이션 루트에 있는 것을 볼 수 있다. 이러한 파일의 대부분은 `create-next-app`을 사용하여 새 프로젝트를 시작할 때 생성되고 사전 구성된다. 이 과정에서는 수정할 필요가 없다.
 
 이 폴더를 자유롭게 탐색해 보자. 코드가 수행하는 모든 작업을 아직 이해하지 못하더라도 걱정하지 말자. 🦕
+
+---
 
 #### 플레이스홀더 데이터
 
@@ -79,6 +87,8 @@ const invoices = [
 
 [데이터베이스 설정 챕터](https://nextjs.org/learn/dashboard-app/setting-up-your-database)에서는 이 데이터를 사용하여 데이터베이스를 시드한다(일부 초기 데이터로 채운다).
 
+---
+
 #### TypeScript
 
 또한 대부분의 파일에는 `.ts` 또는 `.tsx` 접미사가 있음을 알 수 있다. 이유는 프로젝트가 TypeScript로 작성되었기 때문이다.
@@ -107,6 +117,8 @@ TypeScript를 사용하면 송장 금액에 숫자 대신 문자열을 전달하
 
 - 데이터 유형을 수동으로 선언하고 있지만 더 나은 유형 안전성을 위해 데이터베이스 schema를 기반으로 유형을 자동으로 생성하는 [Prisma](https://www.prisma.io/) 를 권장한다.
 - Next.js는 프로젝트에서 TypeScript를 사용하는지 감지하고 필요한 패키지와 구성을 자동으로 설치한다. Next.js에는 코드 편집기용 [TypeScript plugin](https://nextjs.org/docs/app/building-your-application/configuring/typescript#typescript-plugin)도 함께 제공되어 자동 완성 및 유형 안전성을 지원한다.
+
+---
 
 #### 개발 서버 실행
 
