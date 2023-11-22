@@ -7,9 +7,9 @@ const JavaScriptCard = (javaScript: JavaScript) => {
     <>
       <div className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-300 ease-in-out dark:hover:bg-gray-800">
         <Link href={javaScript.slug}>
-          <h2 className="mb-1 text-xl">{javaScript.title}</h2>
-          <p className="mb-1 text-stone-600 dark:text-stone-300 text-sm">{javaScript.description}</p>
-          <time dateTime={javaScript.date} className="mb-2 block text-xs text-gray-600 dark:text-gray-400">
+          <h2 className="mb-2">{javaScript.title}</h2>
+          <p className="mb-2 text-gray-500 dark:text-stone-300 text-sm">{javaScript.description}</p>
+          <time dateTime={javaScript.date} className="mb-2 block text-xs text-gray-400 dark:text-stone-400">
             {format(parseISO(javaScript.date), "LLLL d, yyyy")}
           </time>
           {/* <div
