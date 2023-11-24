@@ -1,0 +1,141 @@
+---
+title: "[Learn Next.js] 4. Creating Layouts and Pages"
+date: 2023-11-24
+description: Learn Next.js - Creating Layouts and Pages
+---
+
+#### 참고 문서
+
+[Creating Layouts and Pages – Next](https://nextjs.org/learn/dashboard-app/creating-layouts-and-pages)
+
+---
+
+💡 **In this chapter…**
+
+- 파일 시스템 라우팅을 사용하여 `dashboard` 경로 생성하기
+- 새 경로 세그먼트를 생성할 때 폴더와 파일의 역할을 이해하기
+- 여러 대시보드 페이지 간에 공유할 수 있는 중첩 레이아웃을 만들기
+- 코로케이션, 부분 렌더링, 루트 레이아웃이 무엇인지 이해하기
+
+---
+
+#### 중첩 라우팅
+
+Next.js는 폴더가 중첩된 경로를 만드는 데 사용되는 파일 시스템 라우팅을 사용한다. 각 폴더는 URL 세그먼트에 매핑되는 **route segment**를 나타낸다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/7cef70a9-a8d2-40ba-9234-cf5f760c2365)
+`layout.tsx` 및 `page.tsx` 파일을 사용하여 각 경로에 대해 별도의 UI를 만들 수 있다.
+
+`page.tsx`는 React 컴포넌트를 내보내는 특수 Next.js 파일이며 경로에 액세스하는 데 필요하다. 애플리케이션에는 이미 페이지 파일: `/app/page.tsx`가 있다. 이는 `/` 경로와 연결된 홈 페이지다.
+
+중첩된 경로를 만들려면 폴더를 서로 중첩하고 그 안에 `page.tsx` 파일을 추가하면 된다. 예를 들어:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/77d44eab-091b-4804-bd46-7198085a0634)
+`/app/dashboard/page.tsx`는 `/dashboard` 경로와 연결되어 있다. 페이지를 만들어서 어떻게 작동하는지 살펴보자!
+
+---
+
+#### 대시보드 페이지 만들기
+
+`/app` 안에 `dashboard`라는 새 폴더를 만든다. 그런 다음 `dashboard` 폴더 내에 다음 콘텐츠로 새 `page.tsx` 파일을 만든다:
+
+```jsx
+// /app/dashboard/page.tsx
+export default function Page() {
+  return <p>Dashboard Page</p>;
+}
+```
+
+이제 개발 서버가 실행 중인지 확인하고 [http://localhost:3000/dashboard를](http://localhost:3000/dashboard%EB%A5%BC) 방문해보자. "Dashboard Page” 텍스트가 표시되어야 한다.
+
+Next.js에서 다양한 페이지를 생성하는 방법은 다음과 같다: 폴더를 사용하여 새 경로 세그먼트를 생성하고 그 안에 `page` 파일을 추가한다.
+
+`page` 파일에 특별한 이름을 지정함으로써 Next.js를 사용하면 [colocate](https://nextjs.org/docs/app/building-your-application/routing#colocation) UI 컴포넌트, 테스트 파일 및 기타 관련 코드를 경로와 함께 배치할 수 있다. `page` 파일 내부의 콘텐츠에만 공개적으로 액세스할 수 있다. 예를 들어 `/ui` 및 `/lib` 폴더는 경로와 함께 `/app` 폴더 내에 같은 위치에 있다.
+
+---
+
+#### 연습: 페이지 만들기
+
+더 많은 경로를 만드는 연습을 해보자. 대시보드에서 두 개의 페이지를 더 만들어 보자:
+
+1. **Customers Page**: 이 페이지는 [http://localhost:3000/dashboard/customers에서](http://localhost:3000/dashboard/customers%EC%97%90%EC%84%9C) 액세스할 수 있어야 한다. 지금은 `<p>Customers Page</p>` 요소를 반환한다.
+2. **Invoices Page**: 송장 페이지는 [http://localhost:3000/dashboard/invoices에서](http://localhost:3000/dashboard/invoices%EC%97%90%EC%84%9C) 액세스할 수 있어야 한다. 지금은 `<p>Invoices Page</p>` 요소를 반환한다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/05d71efd-9f71-449b-a29a-4c317ccd0c88)
+
+Customers Page:
+
+```jsx
+// /app/dashboard/customers/page.tsx
+export default function Page() {
+  return <p>Customers Page</p>;
+}
+```
+
+Invoices Page:
+
+```jsx
+// /app/dashboard/invoices/page.tsx
+export default function Page() {
+  return <p>Invoices Page</p>;
+}
+```
+
+---
+
+#### 대시보드 레이아웃 만들기
+
+대시보드에는 여러 페이지에서 공유되는 일종의 탐색 기능이 있다. Next.js에서는 스페셜 `layout.tsx` 파일을 사용하여 여러 페이지 간에 공유되는 UI를 만들 수 있다. 대시보드 페이지의 레이아웃을 만들어 보자!
+
+`/dashboard` 폴더 내에 `layout.tsx`라는 새 파일을 추가하고 다음 코드를 붙여넣는다:
+
+```jsx
+// /app/dashboard/layout.tsx
+import SideNav from "@/app/ui/dashboard/sidenav";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className="w-full flex-none md:w-64">
+        <SideNav />
+      </div>
+      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+    </div>
+  );
+}
+```
+
+이 코드에서는 몇 가지 일이 진행되고 있으므로 분석해 보자:
+
+먼저 `<SideNav />` 컴포넌트를 레이아웃으로 가져온다. 이 파일로 가져오는 모든 컴포넌트는 레이아웃의 일부가 된다.
+
+`<Layout />` 컴포넌트는 `children` prop을 받는다. 이 하위 항목은 페이지일 수도 있고 다른 레이아웃일 수도 있다. 우리의 경우 `/dashboard` 내부의 페이지는 다음과 같이 자동으로 `<Layout />` 내부에 중첩된다:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/a561629b-8e11-4a53-a493-ac2b81b2137e)
+
+변경 사항을 저장하고 로컬 호스트를 확인하여 모든 것이 올바르게 작동하는지 확인하자. 다음이 표시되어야 한다:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/c42800dd-1d29-401d-9ec7-1621d20fd9fc)
+
+Next.js에서 레이아웃을 사용할 때의 이점 중 하나는 탐색 시 페이지 컴포넌트만 업데이트되고 레이아웃은 다시 렌더링되지 않는다는 것이다. 이를 [부분 렌더링](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#3-partial-rendering)이라고 한다:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/65c99109-2b30-4773-bb5b-6d2fe8d06fd8)
+
+---
+
+#### Root 레이아웃
+
+챕터 3에서 `Inter` 글꼴을 다른 레이아웃인 `/app/layout.tsx`로 가져왔다:
+
+```jsx
+// /app/layout.tsx
+import "@/app/ui/global.css";
+import { inter } from "@/app/ui/fonts";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className} antialiased`}>{children}</body>
+    </html>
+  );
+}
+```
+
+이를 [root layout](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required) 이라고 하며 이것은 필수이다. root 레이아웃에 추가하는 모든 UI는 애플리케이션의 모든 페이지에서 공유된다. root 레이아웃을 사용하여 `<html>` 및 `<body>` 태그를 수정하고 메타데이터를 추가할 수 있다([나중에](https://nextjs.org/learn/dashboard-app/adding-metadata) 메타데이터에 대해 자세히 알아보자).
+
+방금 생성한 새 레이아웃(`/app/dashboard/layout.tsx`)은 대시보드 페이지에 고유하므로 위의 root 레이아웃에 UI를 추가할 필요가 없다.
