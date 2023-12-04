@@ -1,6 +1,6 @@
 ---
 title: "[Learn Next.js] 7. Fetching Data"
-date: 2023-12-03
+date: 2023-12-04
 description: Learn Next.js - Fetching Data
 ---
 
@@ -38,3 +38,283 @@ Next.js에서는 [Route Handlers](https://nextjs.org/docs/app/building-your-appl
 
 - API 엔드포인트를 생성할 때 데이터베이스와 상호 작용하려면 로직을 작성해야 한다.
 - React Server 컴포넌트(서버에서 데이터 가져오기)를 사용하는 경우 API 계층을 건너뛰고 데이터베이스가 클라이언트에 노출될 위험 없이 데이터베이스를 직접 쿼리할 수 있다.
+
+#### 서버 컴포넌트로 데이터 가져오기
+
+기본적으로 Next.js 애플리케이션은 **React Server Components**를 사용한다. 서버 컴포넌트를 사용하여 데이터를 가져오는 것은 비교적 새로운 접근 방식이며 이를 사용하면 몇 가지 이점이 있다:
+
+- 서버 컴포넌트는 Promise를 지원하여 데이터 가져오기와 같은 비동기 작업을 위한 더 간단한 솔루션을 제공한다. `useEffect`, `useState` 또는 데이터를 가져오는 라이브러리에 접근하지 않고도 `async/await` 구문을 사용할 수 있다.
+- 서버 컴포넌트는 서버에서 실행되므로 비용이 많이 드는 데이터 가져오기 및 로직을 서버에 보관하고 결과만 클라이언트로 보낼 수 있다.
+- 앞서 언급한 것처럼 Server Components는 서버에서 실행되기 때문에 별도의 API 계층 없이 데이터베이스에 직접 쿼리할 수 있다.
+
+#### SQL 사용하기
+
+대시보드 프로젝트의 경우 [Vercel Postgres SDK](https://vercel.com/docs/storage/vercel-postgres/sdk) 및 SQL을 사용하여 데이터베이스 쿼리를 작성한다. SQL을 사용하는 데에는 몇 가지 이유가 있다:
+
+- SQL은 관계형 데이터베이스를 쿼리하기 위한 업계 표준이다(예: ORM은 내부적으로 SQL을 생성한다).
+- SQL에 대한 기본적인 이해가 있으면 관계형 데이터베이스의 기본 사항을 이해하는 데 도움이 되며 지식을 다른 도구에 적용할 수 있다.
+- SQL은 다목적이므로 특정 데이터를 가져오고 조작할 수 있다.
+- Vercel Postgres SDK는 [SQL injections](https://vercel.com/docs/storage/vercel-postgres/sdk#preventing-sql-injections)에 대한 보호 기능을 제공한다.
+
+이전에 SQL을 사용해 본 적이 없더라도 걱정하지 말자. 여기서 쿼리를 제공한다.
+
+`/app/lib/data.ts`로 이동하면 `@vercel/postgres`에서 [sql](https://vercel.com/docs/storage/vercel-postgres/sdk#sql) 함수를 가져온다. 이 기능을 사용하면 데이터베이스를 쿼리할 수 있다.
+
+```jsx
+// /app/lib/data.ts
+import { sql } from "@vercel/postgres";
+
+// ...
+```
+
+모든 서버 컴포넌트 내에서 `sql`을 호출할 수 있다. 하지만 컴포넌트를 더 쉽게 탐색할 수 있도록 모든 데이터 쿼리를 `data.ts` 파일에 보관했으며 이를 컴포넌트로 가져올 수 있다.
+
+🗒️ **Note**
+
+챕터 6에서 자체 데이터베이스를 사용한 경우 프로바이더와 함께 작동하려면 데이터베이스 쿼리를 업데이트해야 한다. `/app/lib/data.ts`에서 쿼리를 찾을 수 있다.
+
+---
+
+#### 대시보드 개요 페이지 데이터 가져오기
+
+이제 데이터를 가져오는 다양한 방법을 이해했으므로 대시보드 개요 페이지에 대한 데이터를 가져오자. `/app/dashboard/page.tsx`로 이동하여 다음 코드를 붙여넣고 잠시 탐색해 보자:
+
+```jsx
+// /app/dashboard/page.tsx
+import { Card } from "@/app/ui/dashboard/cards";
+import RevenueChart from "@/app/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
+import { lusitana } from "@/app/ui/fonts";
+
+export default async function Page() {
+  return (
+    <main>
+      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>Dashboard</h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* <Card title="Collected" value={totalPaidInvoices} type="collected" /> */}
+        {/* <Card title="Pending" value={totalPendingInvoices} type="pending" /> */}
+        {/* <Card title="Total Invoices" value={numberOfInvoices} type="invoices" /> */}
+        {/* <Card
+          title="Total Customers"
+          value={numberOfCustomers}
+          type="customers"
+        /> */}
+      </div>
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        {/* <RevenueChart revenue={revenue}  /> */}
+        {/* <LatestInvoices latestInvoices={latestInvoices} /> */}
+      </div>
+    </main>
+  );
+}
+```
+
+위의 코드:
+
+- 페이지는 **async** 컴포넌트다. 이로 데이터를 가져오기 위해 `await`를 사용할 수 있다.
+- 또한 데이터를 수신하는 구성요소는 `<Card`>, `<RevenueChart>`, `<LatestInvoices>` 3개다. 현재는 애플리케이션 오류를 방지하기 위해 주석 처리되어 있다.
+
+---
+
+#### `<RevenueChart/>` 데이터 가져오기
+
+`<RevenueChart/>` 컴포넌트에 대한 데이터를 가져오려면 `data.ts`에서 `fetchRevenue` 함수를 가져오고 컴포넌트 내에서 호출하자:
+
+```jsx
+// /app/dashboard/page.tsx
+import { Card } from "@/app/ui/dashboard/cards";
+import RevenueChart from "@/app/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
+import { lusitana } from "@/app/ui/fonts";
+import { fetchRevenue } from "@/app/lib/data";
+
+export default async function Page() {
+  const revenue = await fetchRevenue();
+  // ...
+}
+```
+
+그런 다음 `<RevenueChart/>` 컴포넌트의 주석 처리를 제거하고 컴포넌트 파일(`/app/ui/dashboard/revenue-chart.tsx`)로 이동한 후 그 안에 있는 코드의 주석 처리를 제거한다.
+
+로컬 호스트를 확인하면 수익 데이터를 사용하는 차트를 볼 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/957168b3-64c0-4bdc-8238-c38abb93da9d)
+
+---
+
+#### `<LatestInvoices/>` 데이터 가져오기
+
+`<LatestInvoices />` 컴포넌트의 경우 날짜별로 정렬된 최신 5개의 송장을 가져와야한다.
+
+JavaScript를 사용하여 모든 송장을 가져와서 정렬할 수 있다. 데이터가 작기 때문에 이는 문제가 되지 않지만 애플리케이션이 커짐에 따라 각 요청에 대해 전송되는 데이터의 양과 이를 정렬하는 데 필요한 JavaScript가 크게 늘어날 수 있다.
+
+메모리 내에서 최신 송장을 정렬하는 대신 SQL 쿼리를 사용하여 마지막 5개의 송장만 가져올 수 있다. 예를 들어, 다음은 `data.ts` 파일의 SQL 쿼리다:
+
+```jsx
+// /app/lib/data.ts
+// Fetch the last 5 invoices, sorted by date
+const data =
+  (await sql) <
+  LatestInvoiceRaw >
+  `
+  SELECT invoices.amount, customers.name, customers.image_url, customers.email
+  FROM invoices
+  JOIN customers ON invoices.customer_id = customers.id
+  ORDER BY invoices.date DESC
+  LIMIT 5`;
+```
+
+페이지에서 `fetchLatestInvoices` 함수를 가져온다:
+
+```jsx
+// /app/dashboard/page.tsx
+import { Card } from "@/app/ui/dashboard/cards";
+import RevenueChart from "@/app/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
+import { lusitana } from "@/app/ui/fonts";
+import { fetchRevenue, fetchLatestInvoices } from "@/app/lib/data";
+
+export default async function Page() {
+  const revenue = await fetchRevenue();
+  const latestInvoices = await fetchLatestInvoices();
+  // ...
+}
+```
+
+그런 다음 `<LatestInvoices />` 컴포넌트의 주석 처리를 제거한다.
+
+또한 `/app/ui/dashboard/latest-invoices`에 있는 `<LatestInvoices />` 컴포넌트 자체에서 관련 코드의 주석 처리를 제거해야 한다.
+
+로컬 호스트를 확인하면 데이터베이스에서 마지막 5개만 반환되는 것을 볼 수 있다. 이제 데이터베이스를 직접 쿼리하는 것의 이점을 확인하기 시작하셨기를 바란다!
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/f22d6c3b-2400-42ec-be71-216e9ebe3822)
+
+---
+
+#### 연습: `<Card>` 컴포넌트 데이터 가져오기
+
+이제 `<Card>` 컴포넌트에 대한 데이터를 가져올 차례다. 카드에는 다음 데이터가 표시된다:
+
+- 수집된 청구서의 총액
+- 보류 중인 송장 총액
+- 총 송장 수입
+- 총 고객 수
+
+다시 말하지만, 모든 송장과 고객을 가져오고 JavaScript를 사용하여 데이터를 조작하고 싶은 유혹을 받을 수도 있다. 예를 들어 `Array.length`를 사용하여 총 송장 수와 고객 수를 얻을 수 있다:
+
+```jsx
+const totalInvoices = allInvoices.length;
+const totalCustomers = allCustomers.length;
+```
+
+그러나 SQL을 사용하면 필요한 데이터만 가져올 수 있다. `Array.length`를 사용하는 것보다 약간 길지만 요청 중에 전송해야 하는 데이터가 적다는 것을 의미한다:
+
+```jsx
+// /app/lib/data.ts
+const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
+const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
+```
+
+가져와야 하는 함수는 `fetchCardData`다. 함수에서 반환된 값을 분해해야 한다.
+
+❓ **Hint**
+
+- 카드 컴포넌트를 확인하여 필요한 데이터가 무엇인지 확인하자.
+- 함수가 반환하는 내용을 보려면 data.ts 파일을 확인하자.
+
+```jsx
+// /app/dashboard/page.tsx
+import { Card } from "@/app/ui/dashboard/cards";
+import RevenueChart from "@/app/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
+import { lusitana } from "@/app/ui/fonts";
+import { fetchRevenue, fetchLatestInvoices, fetchCardData } from "@/app/lib/data";
+
+export default async function Page() {
+  const revenue = await fetchRevenue();
+  const latestInvoices = await fetchLatestInvoices();
+  const { numberOfInvoices, numberOfCustomers, totalPaidInvoices, totalPendingInvoices } = await fetchCardData();
+
+  return (
+    <main>
+      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>Dashboard</h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card title="Collected" value={totalPaidInvoices} type="collected" />
+        <Card title="Pending" value={totalPendingInvoices} type="pending" />
+        <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
+        <Card title="Total Customers" value={numberOfCustomers} type="customers" />
+      </div>
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        <RevenueChart revenue={revenue} />
+        <LatestInvoices latestInvoices={latestInvoices} />
+      </div>
+    </main>
+  );
+}
+```
+
+이제 대시보드 개요 페이지에 대한 모든 데이터를 가져왔다. 우리의 페이지는 다음과 같아야 한다:
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/42417e9e-a5e0-4cd0-b12d-d5bb5494e14f)
+
+하지만 알아두어야 할 두 가지 사항이 있다:
+
+1. 데이터 요청이 의도치 않게 서로를 차단하여 **request waterfall**가 생성된다.
+2. 기본적으로 Next.js는 성능 향상을 위해 경로를 **미리 렌더링**하는데, 이를 정적 렌더링이라고 한다. 따라서 데이터가 변경되면 대시보드에 반영되지 않는다.
+
+이번 장에서는 1번에 대해 논의하고, 다음 장에서는 2번에 대해 자세히 살펴보자.
+
+---
+
+#### request waterfalls 이란?
+
+"waterfall"는 이전 요청의 완료에 따라 달라지는 일련의 네트워크 요청을 나타낸다. 데이터 페칭의 경우 각 요청은 이전 요청이 데이터를 반환한 후에만 시작할 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/bf325079-0ec7-4621-94cf-6e444e52f3a9)
+
+예를 들어 `fetchLatestInvoices()`는 `fetchRevenue()`가 실행될 때까지 기다려야 한다.
+
+```jsx
+// /app/dashboard/page.tsx
+const revenue = await fetchRevenue();
+const latestInvoices = await fetchLatestInvoices(); // wait for fetchRevenue() to finish
+const { numberOfInvoices, numberOfCustomers, totalPaidInvoices, totalPendingInvoices } = await fetchCardData(); // wait for fetchLatestInvoices() to finish
+```
+
+이 패턴이 나쁜 것은 아니다. 다음 요청을 하기 전에 조건이 충족되기를 원하기 때문에 waterfalls를 원하는 경우가 있을 수 있다.
+
+예를 들어 사용자 ID와 프로필 정보를 먼저 가져오고 싶을 수 있다. ID가 있으면 친구 목록을 가져올 수 있다. 이 경우 각 요청은 이전 요청에서 반환된 데이터에 따라 달라진다.
+
+그러나 이 동작은 의도하지 않은 것일 수도 있으며 성능에 영향을 미칠 수도 있다.
+
+---
+
+#### parallel 데이터 가져오기
+
+waterfalls를 방지하는 일반적인 방법은 모든 데이터 요청을 동시에 병렬로 시작하는 것이다.
+
+JavaScript에서는 [Promise.all()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) 또는 [Promise.allSettled()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) 함수를 사용하여 모든 promises을 동시에 시작할 수 있다. 예를 들어, `data.ts`에서는 `fetchCardData()` 함수에 `Promise.all()`을 사용하고 있다:
+
+```jsx
+// /app/lib/data.js
+export async function fetchCardData() {
+  try {
+    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
+    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
+    const invoiceStatusPromise = sql`SELECT
+         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
+         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
+         FROM invoices`;
+
+    const data = await Promise.all([
+      invoiceCountPromise,
+      customerCountPromise,
+      invoiceStatusPromise,
+    ]);
+    // ...
+  }
+}
+```
+
+이 패턴을 사용하면 다음을 수행할 수 있다:
+
+- 모든 데이터 페칭 실행을 동시에 시작하면 성능이 향상될 수 있다.
+- 모든 라이브러리나 프레임워크에 적용할 수 있는 기본 JavaScript 패턴을 사용하자.
+
+그러나 이 JavaScript 패턴에만 의존하면 한 가지 **단점**이 있다. 하나의 데이터 요청이 다른 모든 데이터 요청보다 느리면 어떻게 될까?
