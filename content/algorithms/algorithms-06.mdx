@@ -1,0 +1,111 @@
+---
+title: "[Algorithm] 더 크게 합치기"
+date: 2023-12-19
+description: 더 크게 합치기
+---
+
+#### 문제 설명
+
+연산 ⊕는 두 정수에 대한 연산으로 두 정수를 붙여서 쓴 값을 반환합니다. 예를 들면 다음과 같습니다.
+
+- 12 ⊕ 3 = 123
+- 3 ⊕ 12 = 312
+
+양의 정수 a와 b가 주어졌을 때, a ⊕ b와 b ⊕ a 중 더 큰 값을 return 하는 solution 함수를 완성해 주세요.
+단, a ⊕ b와 b ⊕ a가 같다면 a ⊕ b를 return 합니다.
+
+#### 제한사항
+
+- 1 ≤ a, b < 10,000
+
+#### 입출력 예
+
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            a
+          </th>
+          <th scope="col" class="px-6 py-3">
+            b
+          </th>
+          <th scope="col" class="px-6 py-3">
+            result
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b dark:bg-gray-800 dark:border-gray-700">
+          <td class="px-6 py-4">9</td>
+          <td class="px-6 py-4">91</td>
+          <td class="px-6 py-4">991</td>
+        </tr>
+        <tr class="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+          <td class="px-6 py-4">89</td>
+          <td class="px-6 py-4">8</td>
+          <td class="px-6 py-4">898</td>
+        </tr>
+      </tbody>
+    </table>
+
+#### 입출력 예 설명
+
+- 입출력 예 #1
+
+  - a ⊕ b = 991 이고, b ⊕ a = 919 입니다. 둘 중 더 큰 값은 991 이므로 991을 return 합니다.
+
+- 입출력 예 #2
+
+  - a ⊕ b = 898 이고, b ⊕ a = 889 입니다. 둘 중 더 큰 값은 898 이므로 898을 return 합니다.
+
+#### 나의 풀이
+
+```js
+function solution(a, b) {
+  const answer = String(a) + String(b);
+  const newAnswer = String(b) + String(a);
+  if (Number(answer) > Number(newAnswer)) {
+    return Number(answer);
+  } else if (Number(answer) < Number(newAnswer)) {
+    return Number(newAnswer);
+  } else {
+    return Number(answer);
+  }
+}
+```
+
+a, b의 정수를 받고 있기 때문에 문자열로 우선 변환한다. 그리고 각 문자열을 더해 조건을 붙여 더 큰 값을 return 했다.  
+코드가 꽤 길다고 생각했지만 나름 직관적(?!)이라고 생각하고 다른 사람의 풀이를 확인했다. 역쉬나 사람들은 똑똑하다.
+
+#### 다른 풀이
+
+```jsx
+function solution(a, b) {
+  return Math.max(Number(`${a}${b}`), Number(`${b}${a}`));
+}
+```
+
+다른 사람의 풀이를 차근 차근 확인해보자 🐱‍🏍
+
+먼저, `${a}${b}`와 `${b}${a}` 형식의 템플릿 문자열을 사용하여 두 숫자를 서로 연결한다.  
+이렇게 하면 `a`와 `b`를 순서대로 연결한 문자열과 `b`와 `a`를 순서대로 연결한 문자열이 생성된다.
+그런 다음, `Number()` 함수를 사용하여 이 두 문자열을 숫자로 변환한다.
+
+마지막으로, `Math.max()` 함수를 사용하여 두 숫자 중에서 더 큰 숫자를 찾아 반환한다.
+
+#### Math.max()
+
+Math.max() 함수는 입력값으로 받은 0개 이상의 숫자 중 가장 큰 숫자를 반환한다.
+
+```jsx
+console.log(Math.max(1, 3, 2));
+// Expected output: 3
+
+console.log(Math.max(-1, -3, -2));
+// Expected output: -1
+
+const array1 = [1, 3, 2];
+
+console.log(Math.max(...array1));
+// Expected output: 3
+```
