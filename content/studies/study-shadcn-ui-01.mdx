@@ -1,0 +1,191 @@
+---
+title: "[shadcn/ui] 01. Introduction & Installation"
+date: 2023-12-21
+description: Learn shadcn/ui - Introduction & Installation
+---
+
+#### 참고 문서
+
+[Introduction & Installation – shadcn/ui](https://ui.shadcn.com/docs)
+
+---
+
+이전 챕터에서는 대시보드 페이지를 동적으로 만들었지만 느린 데이터 가져오기가 애플리케이션 성능에 어떤 영향을 미칠 수 있는지 보았다. 데이터 요청이 느린 경우 사용자 경험을 개선할 수 있는 방법을 살펴보자.
+
+💡 **In this chapter…**
+
+- 스트리밍이란 무엇이며 언제 사용할 수 있을까?
+- `loading.tsx` 및 Suspense를 사용하여 스트리밍을 구현하는 방법
+- 로딩 스켈레톤이란?
+- route그룹은 무엇이며 언제 사용할 수 있을까?
+- 애플리케이션에서 Suspense 경계를 배치할 위치
+
+---
+
+#### shadcn-ui란?
+
+[Radix UI](https://www.radix-ui.com/) 및 [Tailwind CSS](https://tailwindcss.com/)를 사용하여 구축된 재사용 가능한 컴포넌트다. 이것은 컴포넌트 라이브러리가 아닌 앱에 복사하여 붙여넣을 수 있는 재사용 가능한 컴포넌트 모음이다.
+
+☄️ **컴포넌트 라이브러리가 아니라는 것은 무엇을 의미할까?**
+
+종속성으로 설치하지 않는다는 의미이다. npm을 통해 사용할 수 없거나 배포되지 않는다.
+필요한 컴포넌트를 선택하자. 코드를 복사하여 프로젝트에 붙여넣고 필요에 맞게 사용자 정의하자. 코드는 우리의 것이다.
+
+❓ **FAQ**
+
+- 복사/붙여넣기하고 종속성으로 패키지하지 않는 이유는 무엇일까?
+  - 이에 대한 아이디어는 사용자에게 코드에 대한 소유권과 제어권을 부여하여 컴포넌트의 빌드 및 스타일 지정 방법을 결정할 수 있도록 하는 것이다.
+  - 몇 가지 적절한 기본값으로 시작한 다음 필요에 맞게 컴포넌트를 사용자 정의하자.
+  - npm 패키지로 컴포넌트를 패키징하는 것의 단점 중 하나는 스타일이 구현과 결합된다는 것이다. 컴포넌트의 디자인은 구현과 분리되어야 한다.
+- npm 패키지로 게시할 계획일까?
+  - No. npm 패키지로 게시할 계획은 없다.
+- 어떤 프레임워크가 지원될까?
+  - [Next.js](https://ui.shadcn.com/docs/installation/next), [Astro](https://ui.shadcn.com/docs/installation/astro), [Remix](https://ui.shadcn.com/docs/installation/remix), [Gatsby](https://ui.shadcn.com/docs/installation/gatsby) 등, React를 지원하는 모든 프레임워크를 사용할 수 있다.
+- 내 프로젝트에서 이것을 사용할 수 있을까?
+  - Yes. 개인 및 상업용 프로젝트에 무료로 사용할 수 있다. 저작자 표시가 필요하지 않다.
+
+---
+
+#### 1. Next.js에서 프로젝트 생성하기
+
+`create-next-app`을 사용하여 새 Next.js 프로젝트를 생성하는 것부터 시작하자:
+
+```jsx
+npx create-next-app@latest my-app --typescript --tailwind --eslint
+```
+
+---
+
+#### 2. CLI 실행하기
+
+`shadcn-ui init` 명령을 실행하여 프로젝트를 설정한다:
+
+```jsx
+npx shadcn-ui@latest init
+```
+
+---
+
+#### 3. components.json 구성하기
+
+`components.json`을 구성하려면 몇 가지 질문을 받게 된다:
+
+```jsx
+Would you like to use TypeScript (recommended)? no / yes
+Which style would you like to use? › Default
+Which color would you like to use as base color? › Slate
+Where is your global CSS file? › › app/globals.css
+Do you want to use CSS variables for colors? › no / yes
+Where is your tailwind.config.js located? › tailwind.config.js
+Configure the import alias for components: › @/components
+Configure the import alias for utils: › @/lib/utils
+Are you using React Server Components? › no / yes
+```
+
+---
+
+#### 4. 폰트
+
+[Inter](https://rsms.me/inter/)를 기본 글꼴로 사용한다. 린터는 필수는 아니며 다른 글꼴로 대체할 수 있다.
+
+Next.js에 대해 Inter를 구성하는 방법은 다음과 같다:
+
+#### 4-1. 루트 레이아웃에서 글꼴을 가져온다:
+
+```jsx
+import "@/styles/globals.css";
+import { Inter as FontSans } from "next/font/google";
+
+import { cn } from "../@/lib/utils";
+
+export const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>...</body>
+    </html>
+  );
+}
+```
+
+#### 4-2. `tailwind.config.js`에서 `theme.extend.fontFamily`를 구성한다:
+
+```jsx
+const { fontFamily } = require("tailwindcss/defaultTheme");
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ["class"],
+  content: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+      },
+    },
+  },
+};
+```
+
+---
+
+#### 5. App 구조
+
+```jsx
+.
+├── app
+│   ├── layout.tsx
+│   └── page.tsx
+├── components
+│   ├── ui
+│   │   ├── alert-dialog.tsx
+│   │   ├── button.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   └── ...
+│   ├── main-nav.tsx
+│   ├── page-header.tsx
+│   └── ...
+├── lib
+│   └── utils.ts
+├── styles
+│   └── globals.css
+├── next.config.js
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+└── tsconfig.json
+```
+
+- UI 컴포넌트를 `components/ui` 폴더에 배치한다.
+- `<PageHeader />` 및 `<MainNav />`와 같은 나머지 컴포넌트는 컴포넌트 폴더에 배치된다.
+- `lib` 폴더에는 모든 유틸리티 함수가 포함되어 있다. `cn` 도우미를 정의하는 `utils.ts`가 있다.
+- `style`폴더에는 전역 CSS가 포함되어 있다.
+
+---
+
+#### 6. 끝
+
+이제 프로젝트에 컴포넌트 추가를 시작할 수 있다.
+
+```jsx
+npx shadcn-ui@latest add button
+```
+
+위 명령은 프로젝트에 `Button` 컴포넌트를 추가한다. 그런 다음 아래와 같이 가져올 수 있다:
+
+```jsx
+import { Button } from "@/components/ui/button";
+
+export default function Home() {
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  );
+}
+```
