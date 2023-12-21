@@ -15,11 +15,11 @@ export default function Home() {
       {/* introduction */}
       <main className="my-10">
         <h1 className="font-bold mb-3">Tami Kim</h1>
-        <h2 className="my-5 px-4">
+        <h2 className="my-5">
           I&#39;m a Front End developer based in South Korea. I&#39;m passion for creating visually stunning and
           user-friendly websites.
         </h2>
-        <h2 className="px-4">
+        <h2>
           I&#39;m currently working at{" "}
           <a href="https://www.optatumplatform.com/" className="hover:underline">
             Optatum Platform
@@ -33,20 +33,11 @@ export default function Home() {
         </Link>
         {/* posts */}
         <article className="mt-5">
-          <div className="mx-auto">
+          <div className="mx-auto ">
             {posts.slice(0, 5).map((post, idx) => (
               <PostCard key={idx} {...post} />
             ))}
           </div>
-          <Link
-            href="/post"
-            passHref
-            className={`inline-block px-2 py-2 mt-2 ${
-              router === "/post" ? "bg-gray-100 dark:bg-gray-800" : ""
-            } rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white `}
-          >
-            more
-          </Link>
         </article>
       </div>
       {/* footer */}
