@@ -5,7 +5,7 @@ import Link from "next/link";
 const StudyCard = (study: Study) => {
   return (
     <>
-      <div className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-300 ease-in-out dark:hover:bg-gray-800">
+      <div className="py-3 rounded-md hover:bg-gray-100 hover:px-2 transition-all duration-700 ease-in-out dark:hover:bg-gray-800">
         <Link href={study.slug}>
           <h2 className="mb-2">{study.title}</h2>
           <p className="mb-2 text-gray-500 dark:text-stone-300 text-sm">{study.description}</p>
