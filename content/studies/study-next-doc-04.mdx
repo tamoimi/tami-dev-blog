@@ -1,0 +1,215 @@
+---
+title: "[Next.js Doc] 04. Linking and Navigating"
+date: 2024-01-06
+description: Next.js Doc - Linking and Navigating
+---
+
+#### 참고 문서
+
+[Linking and Navigating – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating)
+
+Next.js에서 라우트 간에 탐색을 하는 두 가지 방법이 있다:
+
+- [`<Link>`컴포넌트](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#link-component) 사용
+- [`useRouter` Hook](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#userouter-hook) 사용
+
+이 페이지에서 `<Link>`, `useRouter()` 사용 방법을 살펴보고 탐색 작동 방식에 대해 자세히 알아보자.
+
+#### `<Link>` 컴포넌트
+
+`<Link>`는 HTML `<a>` 태그를 확장하여 경로 간 [prefetching](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#1-prefetching) 및 클라이언트 측 탐색을 제공하는 내장 컴포넌트다. 이는 Next.js에서 라우트 간을 탐색하는 기본 방법이다.
+
+`next/link`에서 가져오고 `href` prop을 컴포넌트에 전달하여 사용할 수 있다:
+
+`app/page.tsx`
+
+```tsx
+import Link from "next/link";
+
+export default function Page() {
+  return <Link href="/dashboard">Dashboard</Link>;
+}
+```
+
+`<Link>`에 전달할 수 있는 다른 옵션 prop이 있다. 자세한 내용은 [API 참조](https://nextjs.org/docs/app/api-reference/components/link)를 확인하자.
+
+#### 예제
+
+#### 다이나믹 세그먼트에 연결
+
+[다이나믹 세그먼트](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)에 연결할 때 [템플릿 리터럴](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)을 사용하여 링크 목록을 생성할 수 있다. 예를 들어 블로그 게시물 목록을 생성하려면 아래와 같이 작성할 수 있다:
+
+`app/blog/PostList.js`
+
+```tsx
+import Link from "next/link";
+
+export default function PostList({ posts }) {
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>
+          <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+#### 활성 링크 확인
+
+[usePathname()](https://nextjs.org/docs/app/api-reference/functions/use-pathname)을 사용하여 링크가 활성화 상태인지 확인할 수 있다. 예를 들어 활성 링크에 class를 추가하려면 현재 `pathname`이 링크의 `href`와 일치하는지 확인할 수 있다.
+
+`app/components/links.tsx`
+
+```tsx
+"use client";
+
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+
+export function Links() {
+  const pathname = usePathname();
+
+  return (
+    <nav>
+      <ul>
+        <li>
+          <Link className={`link ${pathname === "/" ? "active" : ""}`} href="/">
+            Home
+          </Link>
+        </li>
+        <li>
+          <Link className={`link ${pathname === "/about" ? "active" : ""}`} href="/about">
+            About
+          </Link>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+```
+
+#### ID로 스크롤
+
+Next.js 앱 라우터의 기본 동작은 새 경로의 맨 위로 스크롤하거나 앞뒤 탐색을 위해 스크롤 위치를 유지하는 것이다.
+
+탐색 시 특정 `id`로 스크롤하려면 `#` 해시 링크를 URL에 추가하거나 해시 링크를 `href` prop에 전달할 수 있다. 이는 `<Link>`가 `<a>` 요소로 렌더링되기 때문에 가능하다.
+
+```tsx
+<Link href="/dashboard#settings">Settings</Link>
+
+// Output
+<a href="/dashboard#settings">Settings</a>
+```
+
+#### 스크롤 복원 비활성화
+
+Next.js 앱 라우터의 기본 동작은 새 경로의 맨 위로 스크롤하거나 앞뒤 탐색을 위해 스크롤 위치를 유지하는 것이다.
+
+이 동작을 비활성화하려면 `<Link>` 컴포넌트에 `scroll={false}`를 전달하거나 `router.push()` 또는 `router.replace()`에 `scroll: false`를 전달하면 된다.
+
+```tsx
+// next/link
+<Link href="/dashboard" scroll={false}>
+  Dashboard
+</Link>
+```
+
+```tsx
+// useRouter
+import { useRouter } from "next/navigation";
+
+const router = useRouter();
+
+router.push("/dashboard", { scroll: false });
+```
+
+---
+
+#### [`useRouter()` Hook](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#userouter-hook)
+
+`useRouter` hook을 사용하면 클라이언트 컴포넌트의 라우트를 프로그래밍 방식으로 변경할 수 있다. 서버 컴포넌트의 경우 대신 [redirect()](https://nextjs.org/docs/app/api-reference/functions/redirect) 을 사용한다.
+
+`app/page.js`
+
+```tsx
+"use client";
+
+import { useRouter } from "next/navigation";
+
+export default function Page() {
+  const router = useRouter();
+
+  return (
+    <button type="button" onClick={() => router.push("/dashboard")}>
+      Dashboard
+    </button>
+  );
+}
+```
+
+`useRouter` 메소드의 전체 목록은 [API 참조](https://nextjs.org/docs/app/api-reference/functions/use-router)를 확인하자.
+
+☄️ **Recommendation**
+
+`useRouter` 사용에 대한 특정 요구사항이 없는 한 `<Link>` 컴포넌트를 사용하여 경로 간을 탐색하자.
+
+---
+
+#### 라우팅 및 탐색 작동 방식
+
+앱 라우터는 라우팅 및 탐색을 위해 하이브리드 접근 방식을 사용한다. 서버에서 애플리케이션 코드는 라우트 세그먼트별로 자동으로 코드 분할된다.
+
+그리고 클라이언트에서 Next.js는 라우트 세그먼트를 [미리 가져](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#1-prefetching)오고 [캐시](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#2-caching)한다
+
+즉, 사용자가 새 라우트로 이동할 때 브라우저는 페이지를 다시 로드하지 않고 변경된 라우트 세그먼트만 다시 렌더링하여 탐색 경험과 성능을 향상시킨다.
+
+#### 1. Prefetching
+
+프리페치는 사용자가 페이지를 방문하기 전에 백그라운드에서 경로를 미리 로드하는 방법이다.
+
+Next.js에서 라우트를 프리페치하는 두 가지 방법이 있다:
+
+- **`<Link>` 컴포너트**: 라우트가 사용자 뷰포트에 표시되면 자동으로 미리 가져온다. 프리페치는 페이지가 처음 로드될 때 또는 스크롤을 통해 표시될 때 발생한다.
+- **`router.prefetch()`**: `useRouter` hook은 프로그래밍 방식으로 경로를 프리페치하는 데 사용할 수 있다.
+
+`<Link>`의 프리페치 동작은 정적 라우트와 동적 라우트에 따라 다르다.
+
+- **[Static Routes](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)**: `prefetch`는 기본값이 `true`다. 전체 경로가 프리페치되고 캐시된다.
+- **[Dynamic Routes](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering)**: `prefetch`기본값은 자동입니다. 첫 번째 `loading.js` 파일까지 렌더링된 컴포넌트 "트리" 아래의 공유 레이아웃만 미리 가져오고 `30초` 동안 캐시된다. 이렇게 하면 전체 동적 경로를 가져오는 비용이 줄어들고 사용자에게 더 나은 시각적 피드백을 제공하기 위해 [instant loading state](https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming#instant-loading-states)를 표시할 수 있다.
+
+`prefetch` prop을 `false`로 설정하여 프리페칭을 비활성화할 수 있다.
+
+자세한 내용은 [`<Link>` API reference](https://nextjs.org/docs/app/api-reference/components/link)를 확인하자.
+
+☄️ **Good to know**
+
+프리페칭은 개발 중에는 활성화되지 않고 프로덕션에서만 활성화된다.
+
+#### 2. 캐싱
+
+Next.js에는 [Router Cache](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data#router-cache)라는 **in-memory client-side cache**가 있다. 사용자가 앱을 탐색할 때 [미리 가져온](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#1-prefetching) 라우트 세그먼트와 방문한 경로의 React Server 컴포넌트 페이로드가 캐시에 저장된다.
+
+이는 탐색 시 서버에 새로운 요청을 하는 대신 캐시를 최대한 재사용하여 요청 수와 전송되는 데이터 수를 줄여 성능을 향상한다는 의미다.
+
+[Router Cache](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data)의 작동 방식과 구성 방법에 대해 자세히 알아보자.
+
+#### 3. 부분 렌더링
+
+부분 렌더링은 클라이언트에서 탐색을 다시 렌더링할 때 변경되는 라우트 세그먼트만 의미하며 모든 라우트 세그먼트는 보존된다.
+
+예를 들어, 두 형제 라우트인 `/dashboard/settings` 및 `/dashboard/analytics` 사이를 탐색할 때 `settings` 및 `analytics` 페이지가 렌더링되고 공유 대시보드 레이아웃이 유지된다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/9d10202f-8fe1-4815-b986-0282afc8a48b)
+
+부분 렌더링이 없으면 탐색할 때마다 전체 페이지가 서버에서 다시 렌더링된다. 변경된 세그먼트만 렌더링하면 전송되는 데이터의 양과 실행 시간이 줄어들어 성능이 향상된다.
+
+#### 4. 소프트 탐색
+
+브라우저는 페이지 간을 탐색할 때 "하드 탐색"을 수행한다. Next.js 앱 라우터는 페이지 간 "소프트 탐색"을 활성화하여 변경된 경로 세그먼트만 다시 렌더링되도록 한다(부분 렌더링). 이를 통해 탐색 중에 클라이언트는 React state를 유지할 수 있다.
+
+#### 5. 뒤로 및 앞으로 탐색
+
+기본적으로 Next.js는 앞뒤 탐색을 위한 스크롤 위치를 유지하고 [Router Cache](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#caching-data)의 라우트 세그먼트를 재사용한다.
