@@ -1,0 +1,56 @@
+---
+title: "[Next.js Doc] 05. Route Groups"
+date: 2024-01-09
+description: Next.js Doc - Route Groups
+---
+
+#### 참고 문서
+
+[Route Groups – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/route-groups)
+
+`app` 디렉터리에서 중첩된 폴더는 일반적으로 URL 경로에 매핑된다. 그러나 폴더가 라우트의 URL 경로에 포함되지 않도록 폴더를 **라우트 그룹**으로 표시할 수 있다.
+
+이를 통해 URL 경로 구조에 영향을 주지 않고 라우트 세그먼트와 프로젝트 파일을 논리 그룹으로 구성할 수 있다.
+
+라우트 그룹은 아래와 같은 경우에 유용하다:
+
+- [라우트를 그룹으로 구성](https://nextjs.org/docs/app/building-your-application/routing/route-groups#organize-routes-without-affecting-the-url-path) (예: 사이트 섹션, 의도 또는 팀)
+- 동일한 경로 세그먼트 레벨에서 [중첩 레이아웃](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) 활성화:
+  - [여러 root 레이아웃을 포함하여 같은 세그먼트에 여러 중첩 레이아웃 만들기](https://nextjs.org/docs/app/building-your-application/routing/route-groups#creating-multiple-root-layouts)
+  - [공통 세그먼트의 라우트 하위 집합에 레이아웃 추가](https://nextjs.org/docs/app/building-your-application/routing/route-groups#opting-specific-segments-into-a-layout)
+
+#### 컨벤션
+
+라우트 그룹은 폴더 이름을 괄호로 묶어 생성할 수 있다: `(folderName)`
+
+---
+
+#### 예제
+
+#### URL 경로에 영향을 주지 않고 경로 구성
+
+URL에 영향을 주지 않고 라우트를 구성하려면 관련 라우트를 함께 유지하는 그룹을 만들자. 괄호 안의 폴더는 URL (예: `(marketing)` 또는 `(shop)`) 에서 생략된다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/46ce5e36-ec7f-4fd4-91bc-69cf7ab25b88)
+
+`(marketing)`및 `(shop)` 내부 라우트가 동일한 URL 계층 구조를 공유하더라도 해당 폴더 내에`layout.js` 파일을 추가하여 각 그룹마다 다른 레이아웃을 만들 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/8fb29089-0a05-4c02-9c87-4ae0aba01b8a)
+
+#### 특정 세그먼트를 레이아웃으로 선택
+
+특정 라우트를 레이아웃으로 선택하려면 새 라우트 그룹(예: `(shop)`)을 만들고 같은 레이아웃을 공유하는 라우트를 그룹(예: `account`및 `cart`)으로 이동한다. 그룹 외부의 라우트는 레이아웃을 공유하지 않는다(예: `checkout`).
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/e4a01057-bbcd-474c-9089-7290969f302c)
+
+#### 여러 root 레이아웃 만들기
+
+여러 [루트 레이아웃](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required)을 생성하려면 최상위 `layout.js` 파일을 제거하고 각 경로 그룹 내에 `layout.js` 파일을 추가한다.
+
+이것은 완전히 다른 UI나 경험을 가진 섹션으로 애플리케이션을 분할하는 데 유용하다. `<html>` 및 `<body>` 태그를 각 루트 레이아웃에 추가해야 한다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/4ebc7cc5-863b-4e89-b2e6-e2881556d728)
+위의 예에서 `(marketing)`과 `(shop)`은 모두 자체 루트 레이아웃을 가지고 있다.
+
+☄️ **Good to know**
+
+- 라우트 그룹의 이름은 조직을 위한 것 외에는 특별한 의미가 없다. URL 경로에는 영향을 미치지 않는다.
+- 라우트 그룹을 포함하는 경로는 다른 경로와 동일한 URL 경로로 해석되어서는 **안된다**. 예를 들어 라우트 그룹은 URL 구조에 영향을 주지 않으므로 `(marketing)/about/page.js` 및 `(shop)/about/page.js`는 모두 `/about`으로 확인되어 오류를 발생한다.
+- 만약 최상위 `layout.js` 파일 없이 여러 root 레이아웃을 사용하는 경우 home `page.js` 파일은 라우트 그룹 중 하나에 정의되어야 한다(예: `app/(marketing)/page.js`).
+- **여러 root 레이아웃**을 탐색하면 **전체 페이지 로드**가 발생한다(클라이언트 측 탐색과 반대). 예를 들어 `app/(shop)/layout.js`를 사용하는 `/cart`에서 `app/(marketing)/layout.js`를 사용하는 `/blog`로 이동하면 전체 페이지 로드가 발생한다. 이는 멀티플 root 레이아웃**에만** 적용된다.
