@@ -24,7 +24,7 @@ const About = () => {
             <a href="https://www.linkedin.com/in/tamiortami/">LinkedIn</a>
           </button>
           <button className="bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-            <a href="/cv">CV</a>
+            <a href="#">CV</a>
           </button>
         </div>
       </div>
