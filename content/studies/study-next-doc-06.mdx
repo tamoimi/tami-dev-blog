@@ -1,0 +1,125 @@
+---
+title: "[Next.js Doc] 06. Dynamic Routes"
+date: 2024-01-10
+description: Next.js Doc - Dynamic Routes
+---
+
+#### 참고 문서
+
+[Dynamic Routes – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)
+
+정확한 세그먼트 이름을 미리 모르고 동적 데이터에서 경로를 생성하려는 경우 요청 시 채워지거나 빌드 시 미리 렌더링되는 다이나믹 세그먼트를 사용할 수 있다.
+
+#### 컨벤션
+
+다이나믹 세그먼트는 폴더 이름을 대괄호로 묶어 생성할 수 있다: `[folderName]`, `[id]` 또는 `[slug]`
+
+다이나믹 세그먼트는 [`layout`](https://nextjs.org/docs/app/api-reference/file-conventions/layout), [`page`](https://nextjs.org/docs/app/api-reference/file-conventions/page), [`route`](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) 및 [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function) 함수에 `params` prop으로 전달된다.
+
+---
+
+#### 예제
+
+예를 들어 블로그에는 `app/blog/[slug]/page.js` 경로가 포함될 수 있다. 여기서 `[slug]`는 블로그 게시물의 다이나믹 세그먼트다.
+
+`app/blog/[slug]/page.tsx`
+
+```tsx
+export default function Page({ params }: { params: { slug: string } }) {
+  return <div>My Post: {params.slug}</div>;
+}
+```
+
+| Route                     | Example URL | `params`        |
+| ------------------------- | ----------- | --------------- |
+| `app/blog/[slug]/page.js` | `/blog/a`   | `{ slug: 'a' }` |
+| `app/blog/[slug]/page.js` | `/blog/b`   | `{ slug: 'b' }` |
+| `app/blog/[slug]/page.js` | `/blog/c`   | `{ slug: 'c' }` |
+
+세그먼트에 대한 params를 생성하는 방법을 알아보려면 [generateStaticParams()](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes#generating-static-params) 페이지를 참조하자.
+
+☄️ **Good to know**
+
+다이나믹 세그먼트는 `pages` 디렉터리의 [Dynamic Routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)와 같다.
+
+---
+
+#### 정적 매개변수 생성
+
+`generateStaticParams` 함수를 [dynamic route segments](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)와 함께 사용하면 요청 시 주문형이 아닌 빌드 시 [경로를 정적](https://nextjs.org/docs/app/building-your-application/rendering/server-components#static-rendering-default)으로 생성할 수 있다.
+
+`app/blog/[slug]/page.tsx`
+
+```tsx
+**export async function generateStaticParams() {
+  const posts = await fetch('https://.../posts').then((res) => res.json())
+
+  return posts.map((post) => ({
+    slug: post.slug,
+  }))
+}**
+```
+
+`generateStaticParams` 함수의 주요 장점은 스마트한 데이터 검색이다. 만약 `fetch` 요청으로`generateStaticParams` 함수 내에서 콘텐츠를 가져오는 경우 요청이 [자동으로 메모](https://nextjs.org/docs/app/building-your-application/caching#request-memoization)된다.
+
+즉, 여러 `generateStaticParams`, 레이아웃 및 페이지에 걸쳐 같은 인수를 사용하는 `fetch` 요청이 한 번만 수행되므로 빌드 시간이 단축된다는 의미다.
+
+만약 `pages`디렉토리에서 마이그레이션하는 경우 [migration guide](https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#dynamic-paths-getstaticpaths)를 사용하자.
+
+자세한 내용과 고급 사용 사례는 [`generateStaticParams` server function documentation](https://nextjs.org/docs/app/api-reference/functions/generate-static-params)를 참조하자.
+
+---
+
+#### Catch-all 세그먼트
+
+대괄호 `[...folderName]` 안에 줄임표를 추가하면 다이나믹 세그먼트를 **모든** 후속 세그먼트로 확장할 수 있다.
+
+예를 들어 `app/shop/[...slug]/page.js`는 `/shop/clothes`와 일치하지만 `/shop/clothes/tops`, `/shop/clothes/tops/t-shirts` 등과도 일치한다.
+
+| Route                        | Example URL   | `params`                    |
+| ---------------------------- | ------------- | --------------------------- |
+| `app/shop/[...slug]/page.js` | `/shop/a`     | `{ slug: ['a'] }`           |
+| `app/shop/[...slug]/page.js` | `/shop/a/b`   | `{ slug: ['a', 'b'] }`      |
+| `app/shop/[...slug]/page.js` | `/shop/a/b/c` | `{ slug: ['a', 'b', 'c'] }` |
+
+---
+
+#### 선택적 Catch-all 세그먼트
+
+Catch-all 세그먼트는 더블 대괄호에 파라미터를 포함하여 **선택사항**으로 만들 수 있다: `[[...folderName]]`
+
+예를 들어 `app/shop/[[...slug]]/page.js`는 `/shop/clothes`, `/shop/clothes/tops`, `/shop/clothes/tops/t-shirts` 외에도 `/shop`과도 일치한다.
+
+**catch-all** 세그먼트와 선택적 **catch-all** 세그먼트의 차이점은 선택 사항을 사용하면 매개변수가 없는 경로도 일치한다는 것이다(위 예에서는 `/shop`).
+
+| Route                          | Example URL   | `params`                    |
+| ------------------------------ | ------------- | --------------------------- |
+| `app/shop/[[...slug]]/page.js` | `/shop`       | `{}`                        |
+| `app/shop/[[...slug]]/page.js` | `/shop/a`     | `{ slug: ['a'] }`           |
+| `app/shop/[[...slug]]/page.js` | `/shop/a/b`   | `{ slug: ['a', 'b'] }`      |
+| `app/shop/[[...slug]]/page.js` | `/shop/a/b/c` | `{ slug: ['a', 'b', 'c'] }` |
+
+---
+
+#### TypeScript
+
+TypeScript를 사용할 때 구성된 경로 세그먼트에 따라 `params` 유형을 추가할 수 있다.
+
+`app/blog/[slug]/page.tsx`
+
+```tsx
+export default function Page({ params }: { params: { slug: string } }) {
+  return <h1>My Page</h1>;
+}
+```
+
+| Route                               | `params` Type Definition                 |
+| ----------------------------------- | ---------------------------------------- |
+| `app/blog/[slug]/page.js`           | `{ slug: string }`                       |
+| `app/shop/[...slug]/page.js`        | `{ slug: string[] }`                     |
+| `app/shop/[[...slug]]/page.js`      | `{ slug?: string[] }`                    |
+| `app/[categoryId]/[itemId]/page.js` | `{ categoryId: string, itemId: string }` |
+
+☄️ **Good to know**
+
+이는 향후 [TypeScript plugin](https://nextjs.org/docs/app/building-your-application/configuring/typescript#typescript-plugin)에 의해 자동으로 수행될 수 있다.
