@@ -16,15 +16,15 @@ export default function Home() {
       <main className="my-10">
         <h1 className="font-bold mb-3">Tami Kim</h1>
         <h2 className="my-5">
-          I&#39;m a Front-End developer based in South Korea, specializing in creating polished, user-friendly, and
+          I am a Front-End developer based in South Korea, specializing in creating polished, user-friendly, and
           accessible web applications.
         </h2>
         <h2 className="my-5">
-          Currently, I work at{" "}
+          I am currently working at{" "}
           <a href="https://www.optatumplatform.com/" className="hover:underline">
             Optatum Platform
           </a>{" "}
-          as a Front-End developer to enhance their payment solution.
+          to enhance their payment solution.
         </h2>
       </main>
       <div className="my-10">
