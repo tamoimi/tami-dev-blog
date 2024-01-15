@@ -1,0 +1,211 @@
+---
+title: "[Next.js Doc] 09. Parallel Routes"
+date: 2024-01-15
+description: Next.js Doc - Parallel Routes
+---
+
+#### 참고 문서
+
+[Parallel Routes – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/parallel-routes)
+
+#### On this page
+
+**Parallel Routes**로 여러 경로를 동시에 또는 조건부로 렌더링할 수 있다.
+
+대시보드 및 소셜 사이트의 피드와 같이 매우 동적인 앱 섹션의 경우 병렬 라우팅을 사용하여 복잡한 라우팅 패턴을 구현할 수 있다.
+
+예를 들어 아래와 같이 @team 페이지와 @analytics 페이지를 동시에 렌더링할 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/9fdbc797-664c-4f0b-a7b4-da4d82052289)
+
+병렬 라우팅으로 라우트가 독립적으로 스트리밍될 때 각 경로에 대한 오류 및 로딩 상태도 구현할 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/a20e360d-eb55-41e3-825c-e2272b7b68ec)
+
+병렬 라우팅으로 인증 상태와 같은 특정 조건에 따라 슬롯을 조건부로 렌더링할 수 있다. 이를 통해 같은 URL에서 완전히 분리된 코드를 사용할 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/e81c1d83-0eec-4581-bd40-f0d6ab96f5cb)
+
+---
+
+#### 컨벤션
+
+병렬 라우트는 명명된 **슬롯**을 사용하여 생성된다. 슬롯은 `@folder` 규칙으로 정의되며 props와 동일한 수준 레이아웃에 전달된다.
+
+🦧 슬롯은 라우트 세그먼트가 _아니며 URL 구조에 영향을 주지 않는다_. `/@team/members` 파일 경로는 `/members`에서 액세스할 수 있다.
+
+예를 들어 아래 파일 구조는 두 개의 명시적 슬롯을 정의한다: `@analytics` 및 `@team`
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/1a242550-5e47-4bd7-b7fb-c3fd5b4ba41d)
+위의 폴더 구조는 `app/layout.js`의 컴포넌트가 `@analytics` 및 `@team` 슬롯 props를 받고, `children` prop과 함께 병렬로 렌더링할 수 있도록 한다:
+
+`app/layout.tsx`
+
+```tsx
+export default function Layout(props: {
+  children: React.ReactNode;
+  analytics: React.ReactNode;
+  team: React.ReactNode;
+}) {
+  return (
+    <>
+      {props.children}
+      {props.team}
+      {props.analytics}
+    </>
+  );
+}
+```
+
+☄️ **Good to know**
+
+`children` prop은 폴더에 매핑할 필요가 없는 암시적 슬롯이다. 즉 `app/page.js`은`app/@children/page.js`와 동일하다.
+
+---
+
+#### Unmatched Routes
+
+기본적으로 슬롯 내에서 렌더링되는 내용은 현재 URL과 일치한다.
+
+일치하지 않는 슬롯의 경우 Next.js가 렌더링하는 콘텐츠는 라우팅 기술과 폴더 구조에 따라 다르다.
+
+#### `default.js`
+
+Next.js가 현재 URL을 기반으로 슬롯의 활성 상태를 복구할 수 없는 경우 fallback으로 렌더링 할 `default.js` 파일을 정의할 수 있다.
+
+아래 폴더 구조를 고려하자. `@team` 슬롯에는 `settings` 디렉터리가 있지만 `@analytics`에는 없다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/f48792b5-d788-4897-b248-6c950bb1830e)
+
+#### 네비게이션
+
+탐색 시 Next.js는 현재 URL과 일치하지 않더라도 슬롯의 이전 활성 상태를 렌더링한다.
+
+#### 새로고침
+
+새로고침할 때 Next.js는 먼저 일치하지 않는 슬롯의 `default.js` 파일을 렌더링하려고 시도한다. 만약 사용할 수 없는 경우 404가 렌더링된다.
+
+🦧 404는 병렬 렌더링되어서는 안 되는 경로를 실수로 렌더링하지 않도록 하는 데 도움된다.
+
+---
+
+#### `useSelectedLayoutSegment(s)`
+
+[`useSelectedLayoutSegment`](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment)와 [`useSelectedLayoutSegments`](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segments)는 모두해당 슬롯 내에서 활성 라우트 세그먼트를 읽을 수 있도록 하는 `parallelRoutesKey`를 허용한다.
+
+`app/layout.tsx`
+
+```tsx
+"use client";
+
+import { useSelectedLayoutSegment } from "next/navigation";
+
+export default function Layout(props: {
+  //...
+  auth: React.ReactNode;
+}) {
+  const loginSegments = useSelectedLayoutSegment("auth");
+  // ...
+}
+```
+
+사용자가 `@auth/login` 또는 URL 표시줄의 `/login`으로 이동하면 `loginSegments`는 `"login`" 문자열과 같다.
+
+---
+
+#### 예제
+
+#### 모달
+
+병렬 라우팅을 사용하여 모달을 렌더링할 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/ce41f283-527d-4138-b95e-d4d220e67dc4)
+`@auth` 슬롯은 일치하는 경로(예: `/login`)로 이동하여 표시할 수 있는 `<Modal>` 컴포넌트를 렌더링한다.
+
+`app/layout.tsx`
+
+```tsx
+export default async function Layout(props: {
+  // ...
+  auth: React.ReactNode;
+}) {
+  return (
+    <>
+      {/* ... */}
+      {props.auth}
+    </>
+  );
+}
+```
+
+`app/@auth/login/page.tsx`
+
+```tsx
+import { Modal } from "components/modal";
+
+export default function Login() {
+  return (
+    <Modal>
+      <h1>Login</h1>
+      {/* ... */}
+    </Modal>
+  );
+}
+```
+
+모달이 활성화되지 않은 경우 모달의 콘텐츠가 렌더링되지 않도록 하려면 `null`을 반환하는 `default.js` 파일을 생성할 수 있다.
+
+`app/@auth/default.tsx`
+
+```tsx
+export default function Default() {
+  return null;
+}
+```
+
+#### 모달 해제
+
+만약 클라이언트 탐색을 통해 모달이 시작된 경우 `<Link href="/login">`을 사용하면 `router.back()`을 호출하거나 `Link` 컴포넌트를 사용하여 모달을 해제할 수 있다.
+
+`app/@auth/login/page.tsx`
+
+```tsx
+"use client";
+import { useRouter } from "next/navigation";
+import { Modal } from "components/modal";
+
+export default function Login() {
+  const router = useRouter();
+  return (
+    <Modal>
+      <span onClick={() => router.back()}>Close modal</span>
+      <h1>Login</h1>
+      ...
+    </Modal>
+  );
+}
+```
+
+다른 곳으로 이동하고 모달을 닫으려면 catch-all 라우트를 사용할 수도 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/29855fc3-b171-494a-aa67-ffcec3141247)
+
+`app/@auth/[...catchAll]/page.tsx`
+
+```tsx
+export default function CatchAll() {
+  return null;
+}
+```
+
+catch-all 경로는 `default.js`보다 우선 순위다.
+
+#### 조건부 라우트
+
+병렬 라우트를 사용하여 조건부 라우팅을 구현할 수 있다. 예를 들어 인증 상태에 따라 `@dashboard` 또는 `@login` 경로를 렌더링할 수 있다.
+
+`app/layout.tsx`
+
+```tsx
+import { getUser } from "@/lib/auth";
+
+export default function Layout({ dashboard, login }: { dashboard: React.ReactNode; login: React.ReactNode }) {
+  const isLoggedIn = getUser();
+  return isLoggedIn ? dashboard : login;
+}
+```
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/f294bd1a-16c4-40eb-929c-2c10cc62d832)
