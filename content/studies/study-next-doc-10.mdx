@@ -1,0 +1,64 @@
+---
+title: "[Next.js Doc] 10. Intercepting Routes"
+date: 2024-01-16
+description: Next.js Doc - Intercepting Routes
+---
+
+#### 참고 문서
+
+[Intercepting Routes – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/intercepting-routes)
+
+#### On this page
+
+라우트를 가로채기는 현재 레이아웃 안에서 라우트를 로드하면서 현재 페이지의 컨텍스트를 유지할 수 있게 해준다. 이 라우팅 패러다임은 특정 경로를 “가로채서” 다른 경로의 내용을 표시하려는 경우 유용하다.
+
+예를 들어, 피드에서 사진을 클릭하면 피드에 오버레이되어 사진을 모달로 표시할 수 있다. 이 때Next.js는 `/photo/123` 라우트를 가로채서 URL을 마스크하고 `/feed` 위에 오버레이한다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/129496536/4de936e0-16b9-42f9-8011-d52355f17f19)
+
+그러나 공유 가능한 URL을 클릭하거나 페이지를 새로고침하는 경우 처럼 사진으로 직접 이동하면 모달 대신 전체 사진 페이지가 렌더링되어야 한다. 라우트 가로채기가 발생해서는 안된다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/129496536/147ae86e-0819-46f4-bd6d-384c98edf9e0)
+
+---
+
+#### 컨벤션
+
+라우트 가로채기는 `(..)` 구문으로 정의할 수 있다. 이것은 상대 경로 표기법인 `../`과 비슷하지만 세그먼트에 대해 적용된다.
+
+아래와 같이 사용 가능하다:
+
+- `(.)`는 같은 수준의 세그먼트와 일치한다.
+- `(..)`는 한 수준 위의 세그먼트와 일치한다.
+- `(..)(..)`는 두 수준 위의 세그먼트와 일치한다.
+- `(...)`는 root 앱 디렉토리부터의 세그먼트와 일치한다.
+
+예를 들어, `(..)photo` 디렉토리를 생성하여 `feed` 세그먼트 내에서 `photo` 세그먼트를 가로챌 수 있다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/129496536/90af3ecd-d687-4d76-ab6d-88314e46db3e)
+
+🦧 `(..)` 규칙은 파일 시스템이 아닌 *라우트 세그먼트*를 기반으로 한다.
+
+---
+
+#### 예제
+
+#### 모달
+
+라우트 가로채기는 [Parallel Routes](https://nextjs.org/docs/app/building-your-application/routing/parallel-routes)와 함께 사용하여 모달을 생성할 수 있다.
+
+이 패턴을 사용하여 모달을 생성하면 아래와 같은 기능을 통해 모달 작업 시 몇 가지 일반적인 문제를 극복할 수 있다:
+
+- URL을 통해 모달 내용을 공유 가능하게 한다.
+- 페이지를 새로고침할 때 모달을 닫는 대신 컨텍스트를 유지한다.
+- 이전 경로로 이동하는 대신 뒤로 가기로 모달을 닫을 수 있다.
+- 앞으로 가기로 모달을 다시 열 수 있다.
+
+![image](https://github.com/tamoimi/tami-dev-blog/assets/129496536/22a7571b-c9dd-45db-8072-b0580f729882)
+
+🦧 위의 예에서  `photo` 세그먼트의 경로는 `@modal`이 세그먼트가 아니라 슬롯이기 때문에`(..)` 매처를 사용할 수 있다. 즉, 파일 시스템 수준이 두 개 더 높음에도 불구하고 `photo` 경로가 한 세그먼트 수준만 높다.
+
+
+다른 예로는 상단 네비바에서 로그인 모달을 열면서 동시에 별도의 `/login` 페이지도 가질 수 있다.또 쇼핑 카드를 측면 모달로 열 수도 있다.
+
+가로채기 및 Parallel Routes가 포함된 [모달의 예](https://github.com/vercel-labs/nextgram)를 확인해보자.
