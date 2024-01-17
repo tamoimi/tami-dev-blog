@@ -1,0 +1,511 @@
+---
+title: "[Next.js Doc] 11. Route Handlers"
+date: 2024-01-17
+description: Next.js Doc - Route Handlers
+---
+
+#### 참고 문서
+
+[Route Handlers – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)
+
+#### On this page
+
+라우트 핸들러로 웹 [요청](https://developer.mozilla.org/docs/Web/API/Request) 및 [응답](https://developer.mozilla.org/docs/Web/API/Response) API를 사용하여 특정 라우트에 대한 커스텀 리퀘스트 핸들러를 생성할 수 있다.
+![image](https://github.com/tamoimi/tami-dev-blog/assets/100749520/a5bd0bd1-e0e3-49d5-98b1-4d7b89ead65e)
+
+☄️ **Good to know**
+
+라우트 핸들러는 `app` 디렉터리 내에서만 사용할 수 있다. `page` 디렉터리 내의 [API 경로](https://nextjs.org/docs/pages/building-your-application/routing/api-routes)와 동일하므로 API 경로와 라우트 핸들러를 함께 사용할 필요가 **없다**.
+
+---
+
+#### 컨벤션
+
+라우트 핸들러는 `app`디렉터리 내의 [`route.js|ts` file](https://nextjs.org/docs/app/api-reference/file-conventions/route)에 정의되어 있다:
+
+```tsx
+// app/api/route.ts
+export const dynamic = "force-dynamic"; // defaults to auto
+export async function GET(request: Request) {}
+```
+
+라우트 핸들러는 `page.js` 및 `layout.js`와 비슷하게 `app` 디렉터리 내에 중첩될 수 있다. 그러나 `page.js`와 같은 경로 세그먼트 레벨에는 `Route.js` 파일이 있을 수 **없다**.
+
+#### 지원되는 HTTP 메서드
+
+다음과 같은 [HTTP 메서드](https://developer.mozilla.org/docs/Web/HTTP/Methods)들이 지원된다: `GET`, `POST`, `PATCH`, `DELETE`, `HEAD`.
+
+만약 지원되지 않는 메서드가 호출되면 Next.js는 `405 Method Not Allowed` 응답을 반환한다.
+
+#### 확장된 `NextRequest` 및 `NextResponse` API
+
+기본 요청 및 응답을 지원하는 것 외에도 Next.js는 이를 [NextRequest](https://nextjs.org/docs/app/api-reference/functions/next-request) 및 [NextResponse](https://nextjs.org/docs/app/api-reference/functions/next-response)로 확장하여 더 향상된 케이스들을 위해 편리한 도구들을 제공한다.
+
+---
+
+#### Behavior
+
+#### 캐싱
+
+라우트 핸들러는 `Response` 객체와 함께 `GET` 메서드를 사용할 때 기본적으로 캐시된다.
+
+```tsx
+// app/items/route.ts
+export async function GET() {
+  const res = await fetch("https://data.mongodb-api.com/...", {
+    headers: {
+      "Content-Type": "application/json",
+      "API-Key": process.env.DATA_API_KEY,
+    },
+  });
+  const data = await res.json();
+
+  return Response.json({ data });
+}
+```
+
+🦧 **TypeScript Warning:**
+
+`Response.json()`은 TypeScript 5.2에서만 유효하다. 더 낮은 TypeScript 버전을 사용하는 경우 대신 입력된 응답에 [`NextResponse.json`](https://nextjs.org/docs/app/api-reference/functions/next-response#json)을 사용할 수 있다.
+
+#### 캐싱 선택 해제
+
+아래 방법으로 캐싱을 선택 해제할 수 있다:
+
+- `GET` 메소드와 함께 `Request` 객체를 사용한다.
+- 다른 HTTP 메서드를 사용한다.
+- `cookies` 및 `headers`와 같은 [동적 기능](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#dynamic-functions)을 사용한다.
+- [세그먼트 구성 옵션](https://nextjs.org/docs/app/building-your-application/routing/route-handlers#segment-config-options)은 동적 모드를 수동으로 지정한다.
+
+예를 들어:
+
+```tsx
+// app/products/api/route.ts
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+  const res = await fetch(`https://data.mongodb-api.com/product/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "API-Key": process.env.DATA_API_KEY!,
+    },
+  });
+  const product = await res.json();
+
+  return Response.json({ product });
+}
+```
+
+마찬가지로 `POST` 메서드는 라우트 핸들러가 동적으로 평가되도록 한다.
+
+```tsx
+// app/items/route.ts
+export async function POST() {
+  const res = await fetch("https://data.mongodb-api.com/...", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "API-Key": process.env.DATA_API_KEY!,
+    },
+    body: JSON.stringify({ time: new Date().toISOString() }),
+  });
+
+  const data = await res.json();
+
+  return Response.json(data);
+}
+```
+
+☄️ **Good to know**
+
+API 라우트 처럼 라우트 핸들러는 양식 제출 같은 경우에 사용할 수 있다. React와 깊이 통합되는 [폼과 뮤테이션을 처리](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)하기 위한 새로운 추상화가 작업 중이다.
+
+#### 라우트 해결
+
+`route`를 가장 낮은 수준의 라우팅 기본 요소로 고려할 수 있다.
+
+- `page`와 같은 레이아웃이나 클라이언트 측 네비게이션에는 관여하지 **않는다**.
+- `page.js`와 같은 경로에 `route.js` 파일이 있을 수 **없다**.
+
+| Page               | Route            | Result      |
+| ------------------ | ---------------- | ----------- |
+| app/page.js        | app/route.js     | ❌ Conflict |
+| app/page.js        | app/api/route.js | ✅ Valid    |
+| app/[user]/page.js | app/api/route.js | ✅ Valid    |
+
+각각의 `route.js` 와 `page.js` 파일은 해당 경로에 대한 모든 HTTP 동사를 차지한다.
+
+```tsx
+// app/page.js
+export default function Page() {
+  return <h1>Hello, Next.js!</h1>;
+}
+
+// ❌ Conflict
+// `app/route.js`
+export async function POST(request) {}
+```
+
+---
+
+#### 예제
+
+아래 예에서는 라우터 핸들러를 다른 Next.js API 및 기능과 어떻게 결합하는지 보여준다.
+
+#### 캐시된 데이터 재검증
+
+[`next.revalidate`](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) 옵션을 사용하여 [캐시된 데이터의 유효성](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data)을 다시 검사할 수 있다.
+
+```tsx
+// app/items/route.ts
+export async function GET() {
+  const res = await fetch("https://data.mongodb-api.com/...", {
+    next: { revalidate: 60 }, // Revalidate every 60 seconds
+  });
+  const data = await res.json();
+
+  return Response.json(data);
+}
+```
+
+또는 [세그먼트 구성 재검증 옵션](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#revalidate)을 사용할 수 있다.
+
+```tsx
+export const revalidate = 60;
+```
+
+---
+
+#### 동적 함수
+
+라우트 핸들러는 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies) 및 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)와 같은 Next.js의 동적 함수와 함께 사용할 수 있다.
+
+#### 쿠키
+
+`next/headers`의 [`cookies`](https://nextjs.org/docs/app/api-reference/functions/cookies)를 사용하여 쿠키를 읽거나 설정할 수 있다. 이 서버 함수는 Route Handler에서 직접 호출되거나 다른 함수 내에 중첩될 수 있다.
+
+또는 [Set-Cookie](https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie) 헤더를 사용하여 새 `Response`을 반환할 수 있다.
+
+```tsx
+// app/api/route.ts
+import { cookies } from "next/headers";
+
+export async function GET(request: Request) {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token");
+
+  return new Response("Hello, Next.js!", {
+    status: 200,
+    headers: { "Set-Cookie": `token=${token.value}` },
+  });
+}
+```
+
+웹 API를 사용하여 요청([NextRequest](https://nextjs.org/docs/app/api-reference/functions/next-request))에서 쿠키를 읽을 수도 있다:
+
+```tsx
+// app/api/route.ts
+import { type NextRequest } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get("token");
+}
+```
+
+#### 헤더
+
+`next/headers`에서 [`headers`](https://nextjs.org/docs/app/api-reference/functions/headers)가 포함된 헤더를 읽을 수 있다. 이 서버 함수는 Route Handler에서 직접 호출되거나 다른 함수 내에 중첩될 수 있다.
+
+이 `headers` instance는 읽기 전용이다. 헤더를 설정하려면 새 `headers`가 포함된 새 `Response`을 반환해야 한다.
+
+```tsx
+// app/api/route.ts
+import { headers } from "next/headers";
+
+export async function GET(request: Request) {
+  const headersList = headers();
+  const referer = headersList.get("referer");
+
+  return new Response("Hello, Next.js!", {
+    status: 200,
+    headers: { referer: referer },
+  });
+}
+```
+
+웹 API를 사용하여 요청([NextRequest](https://nextjs.org/docs/app/api-reference/functions/next-request))에서 헤더를 읽을 수도 있다:
+
+```tsx
+// app/api/route.ts
+import { type NextRequest } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+}
+```
+
+---
+
+#### 리다이렉트
+
+```tsx
+// app/api/route.ts
+import { redirect } from "next/navigation";
+
+export async function GET(request: Request) {
+  redirect("https://nextjs.org/");
+}
+```
+
+---
+
+#### 동적 라우트 세그먼트
+
+🦧 계속하기 전에 [Defining Routes](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) 페이지를 읽어보는 것을 추천한다.
+
+라우트 핸들러는 [동적 세그먼트](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)를 사용하여 동적 데이터에서 라우트 핸들러를 생성할 수 있다.
+
+```tsx
+// app/items/[slug]/route.ts
+export async function GET(request: Request, { params }: { params: { slug: string } }) {
+  const slug = params.slug; // 'a', 'b', or 'c'
+}
+```
+
+| **Route**                   | **Example URL** | `params`        |
+| --------------------------- | --------------- | --------------- |
+| `app/items/[slug]/route.js` | `/items/a`      | `{ slug: 'a' }` |
+| `app/items/[slug]/route.js` | `/items/b`      | `{ slug: 'b' }` |
+| `app/items/[slug]/route.js` | `/items/c`      | `{ slug: 'c' }` |
+
+---
+
+#### URL 쿼리 파라미터
+
+라우트 핸들러에 전달된 요청 객체는 쿼리 매개변수를 더 쉽게 처리하는 것을 포함하여 [몇 가지 추가 편의 메서드](https://nextjs.org/docs/app/api-reference/functions/next-request#nexturl)가 있는 `NextReques` 인스턴스다.
+
+```tsx
+// app/api/search/route.ts
+import { type NextRequest } from "next/server";
+
+export function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const query = searchParams.get("query");
+  // query is "hello" for /api/search?query=hello
+}
+```
+
+---
+
+#### 스트리밍
+
+스트리밍은 AI 생성 콘텐츠를 위해 OpenAI와 같은 LLM(Large Language Models)과 함께 일반적으로 사용된다. [AI SDK](https://sdk.vercel.ai/docs)에 대해 자세히 알아보자.
+
+```tsx
+// app/api/chat/route.ts
+import OpenAI from "openai";
+import { OpenAIStream, StreamingTextResponse } from "ai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export const runtime = "edge";
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const response = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    stream: true,
+    messages,
+  });
+
+  const stream = OpenAIStream(response);
+
+  return new StreamingTextResponse(stream);
+}
+```
+
+이러한 추상화는 웹 API를 사용하여 스트림을 생성한다. 웹 API를 직접 사용할 수도 있다.
+
+```tsx
+// app/api/route.ts
+// https://developer.mozilla.org/docs/Web/API/ReadableStream#convert_async_iterator_to_stream
+function iteratorToStream(iterator: any) {
+  return new ReadableStream({
+    async pull(controller) {
+      const { value, done } = await iterator.next();
+
+      if (done) {
+        controller.close();
+      } else {
+        controller.enqueue(value);
+      }
+    },
+  });
+}
+
+function sleep(time: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+}
+
+const encoder = new TextEncoder();
+
+async function* makeIterator() {
+  yield encoder.encode("<p>One</p>");
+  await sleep(200);
+  yield encoder.encode("<p>Two</p>");
+  await sleep(200);
+  yield encoder.encode("<p>Three</p>");
+}
+
+export async function GET() {
+  const iterator = makeIterator();
+  const stream = iteratorToStream(iterator);
+
+  return new Response(stream);
+}
+```
+
+---
+
+#### 리퀘스트 바디
+
+표준 웹 API 메서드를 사용하여 `Request` body를 읽을 수 있다.
+
+```tsx
+// app/items/route.ts
+export async function POST(request: Request) {
+  const res = await request.json();
+  return Response.json({ res });
+}
+```
+
+---
+
+#### 리퀘스트 바디 폼 데이터
+
+`request.formData()` 함수를 사용하여 `FormData`를 읽을 수 있다:
+
+```tsx
+// app/items/route.ts
+export async function POST(request: Request) {
+  const formData = await request.formData();
+  const name = formData.get("name");
+  const email = formData.get("email");
+  return Response.json({ name, email });
+}
+```
+
+`formData` 데이터는 모두 문자열이므로 [`zod-form-data`](https://www.npmjs.com/zod-form-data)를 사용하여 요청을 검증하고 원하는 형식(예: `number`)으로 데이터를 검색할 수 있다.
+
+---
+
+#### CORS(Cross-origin resource sharing)
+
+표준 웹 API 메서드를 사용하여 `Response`에 CORS 헤더를 설정할 수 있다:
+
+```tsx
+// app/api/route.ts
+export const dynamic = "force-dynamic"; // defaults to auto
+
+export async function GET(request: Request) {
+  return new Response("Hello, Next.js!", {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
+}
+```
+
+---
+
+#### Webhooks
+
+라우트 핸들러를 사용하여 타사 서비스로부터 webhooks를 수신할 수 있다:
+
+```tsx
+// app/api/route.ts
+export async function POST(request: Request) {
+  try {
+    const text = await request.text();
+    // Process the webhook payload
+  } catch (error) {
+    return new Response(`Webhook error: ${error.message}`, {
+      status: 400,
+    });
+  }
+
+  return new Response("Success!", {
+    status: 200,
+  });
+}
+```
+
+특히 페이지 라우터를 사용하는 API 경로와 달리 추가 구성을 사용하기 위해 `bodyParser`를 사용할 필요가 없다.
+
+---
+
+#### Edge 와 Node.js Runtimes
+
+라우트 핸들러에는 스트리밍 지원을 포함하여 Edge 및 Node.js 런타임을 모두 원활하게 지원하는 isomorphic 웹 API가 있다.
+
+라우트 핸들러는 페이지 및 레이아웃과 같은 [경로 세그먼트 구성](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용하므로 일반적인 목적의 [정적으로 재생성](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data)된 라우트 핸들러와 같은 오래 기다려온 기능들을 지원한다.
+
+`runtime` 세그먼트 구성 옵션을 사용하여 런타임을 지정할 수 있다:
+
+```tsx
+export const runtime = "edge"; // 'nodejs' is the default
+```
+
+---
+
+#### 비 UI 응답
+
+라우터 핸들러를 사용하여 UI가 아닌 콘텐츠를 반환할 수 있다. [`sitemap.xml`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generating-a-sitemap-using-code-js-ts), [`robots.txt`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots#generate-a-robots-file), [`app icons`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons#generate-icons-using-code-js-ts-tsx)및 [open graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)는 모두 기본적으로 지원된다.
+
+```tsx
+// app/rss.xml/route.ts
+export const dynamic = "force-dynamic"; // defaults to auto
+
+export async function GET() {
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+ 
+<channel>
+  <title>Next.js Documentation</title>
+  <link>https://nextjs.org/docs</link>
+  <description>The React Framework for the Web</description>
+</channel>
+ 
+</rss>`,
+    {
+      headers: {
+        "Content-Type": "text/xml",
+      },
+    }
+  );
+}
+```
+
+---
+
+#### 세그먼트 구성 옵션
+
+라우터 핸들러는 페이지 및 레이아웃과 같은 [경로 세그먼트 구성](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config)을 사용한다.
+
+```tsx
+// app/items/route.ts
+export const dynamic = "auto";
+export const dynamicParams = true;
+export const revalidate = false;
+export const fetchCache = "auto";
+export const runtime = "nodejs";
+export const preferredRegion = "auto";
+```
