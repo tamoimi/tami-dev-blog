@@ -1,0 +1,364 @@
+---
+title: "[Next.js Doc] 12. Middleware"
+date: 2024-01-18
+description: Next.js Doc - Middleware
+---
+
+#### 참고 문서
+
+[Middleware – Next.js doc](https://nextjs.org/docs/app/building-your-application/routing/middleware#convention)
+
+#### On this page
+
+미들웨어로 요청이 완료되기 전에 코드를 실행할 수 있으며, 들어오는 요청에 따라 요청 또는 응답 헤더를 재 작성, 리디렉션, 수정하거나 직접 응답하여 응답을 수정할 수 있다.
+
+미들웨어는 캐시된 콘텐츠와 라우트가 일치하기 전에 실행된다. 자세한 내용은 [일치하는 경로](https://nextjs.org/docs/app/building-your-application/routing/middleware#matching-paths)를 참조하자.
+
+---
+
+#### 컨벤션
+
+미들웨어를 정의하려면 프로젝트 root에 있는 `middleware.ts`(또는 `.js`) 파일을 사용하여 작성할 수 있다. 예를 들어 `page` 와 `app`과 같은 수준이거나 `src`폴더를 사용하는 경우 `src` 내부에 작성할 수 있다.
+
+---
+
+#### 예제
+
+```jsx
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  return NextResponse.redirect(new URL("/home", request.url));
+}
+
+// See "Matching Paths" below to learn more
+export const config = {
+  matcher: "/about/:path*",
+};
+```
+
+---
+
+#### 매칭 경로
+
+프로젝트의 모든 경로에 대해 미들웨어가 호출된다. 실행 순서는 다음과 같다:
+
+1. `next.config.js` 의 `headers`
+2. `next.config.js` 의 `redirects`
+3. 미들웨어 (`rewrites`, `redirects`, etc.)
+4. `next.config.js`의 `beforeFiles` (`rewrites`)
+5. 파일 시스템 라우트 (`public/`, `_next/static/`, `pages/`, `app/`, etc.)
+6. `next.config.js` 의 `afterFiles` (`rewrites`)
+7. 다이나믹 라우트 (`/blog/[slug]`)
+8. `next.config.js` 의 `fallback` (`rewrites`)
+
+미들웨어가 실행될 경로를 정의하는 방법에는 두 가지가 있다:
+
+1.  [사용자 정의 매처](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher)
+2.  [조건문](https://nextjs.org/docs/app/building-your-application/routing/middleware#conditional-statements)
+
+#### Matcher
+
+`matcher`로 미들웨어를 필터링하여 특정 경로에서 실행되도록 할 수 있다.
+
+```jsx
+// middleware.js
+export const config = {
+  matcher: "/about/:path*",
+};
+```
+
+배열 구문을 사용하여 여러 경로를 일치시킬 수 있다:
+
+```jsx
+// middleware.js
+export const config = {
+  matcher: ["/about/:path*", "/dashboard/:path*"],
+};
+```
+
+`matcher` 구성은 정규표현식을 허용하므로 부정 예측 또는 문자 일치와 같은 일치가 지원된다. 특정 경로를 제외한 모든 경로와 일치하는 부정 예측의 예는 아래와 같다:
+
+```jsx
+// middleware.js
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
+};
+```
+
+`missing` 배열로 미들웨어를 통과할 필요가 없는 프리페치(`next/link`에서)를 무시할 수도 있다:
+
+```jsx
+// middleware.js
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    {
+      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
+};
+```
+
+☄️ **Good to know**
+
+`matcher` 값은 빌드 시 정적으로 분석될 수 있도록 상수여야 한다. 변수와 같은 동적 값은 무시된다.
+
+**matcher 적용 방식:**
+
+1. 반드시 **`/`**으로 시작되어야한다.
+2. 명명된 매개변수를 포함할 수 있다: **`/about/:path`** 로 설정하면, **`/about/a`**,**`/about/b`**는 포함되며, **`/about/a/c`** 는 포함되지않는다.
+3. 명명된 매개변수에 수정자를 가질 수 있다 (`:`로 시작):
+   1. **`/about/:path*`** 으로 설정하면 `*`가 0 이상이므로 **`about/a/c`** 를 포함한다.
+   2. `?`는 0또는 1이고 `+`는 1이거나 1이상이다.
+4. 괄호 안에 정규 표현식을 사용할 수 있다: **`/about/(.*)`** 은 **`/about/:path*`** 와 같다.
+
+[정규 표현식 경로 문서](https://github.com/pillarjs/path-to-regexp#path-to-regexp-1)에 대한 자세한 내용을 읽어보자.
+
+☄️ **Good to know**
+
+이전 버전과의 호환성을 위해 Next.js는 항상 `/public`을 `/public/index`로 간주한다. 그러므로 `/public/:path`의 매처는 일치한다.
+
+#### 조건문
+
+```jsx
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/about")) {
+    return NextResponse.rewrite(new URL("/about-2", request.url));
+  }
+
+  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+    return NextResponse.rewrite(new URL("/dashboard/user", request.url));
+  }
+}
+```
+
+---
+
+#### NextResponse
+
+`NextResponse API`로 다음을 수행할 수 있다:
+
+- 들어오는 요청을 다른 URL로 `redirect`할 수 있다.
+- 주어진 URL을 표시하여 응답을 `rewrite`할 수 있다.
+- API 경로, `getServerSideProps`에 대한 요청 헤더 설정 및 대상 `rewrite`를 할 수 있다.
+- 응답 쿠키 설정을 할 수 있다.
+- 응답 헤더 설정을 할 수 있다
+
+미들웨어에서 응답을 생성하려면 아래와 같은 방법을 수행할 수 있다:
+
+1. 응답을 생성하는 라우트([Page](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) 또는 [Route Handler](https://nextjs.org/docs/app/building-your-application/routing/route-handlers))에 `rewrite`
+2. `NextResponse`를 직접 반환한다. [Producing a Response](https://nextjs.org/docs/app/building-your-application/routing/middleware#producing-a-response)을 참조하자.
+
+---
+
+#### 쿠키 사용
+
+쿠키는 일반 헤더다. `Request` 시 `Cookie` 헤더에 저장된다. `Response`에서는 `Set-Cookie` 헤더에 저장된다. Next.js는 `NextRequest` 및 `NextResponse`의 `cookies` 확장을 통해 이러한 쿠키에 액세스하고 조작하는 편리한 방법을 제공한다.
+
+1. 들어오는 요청의 경우 쿠키는 다음과 같은 방법으로 제공된다:
+   1. `get`, `getAll`, `set`, 그리고 `delete` cookies. `has`를 사용하여 쿠키의 존재를 확인하거나 `clear`를 사용하여 모든 쿠키를 제거할 수 있다.
+2. 나가는 응답의 경우 쿠키에는 `get`, `getAll`, `set`, 그리고 `delete` 메서드가 있다.
+
+```jsx
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  // Assume a "Cookie:nextjs=fast" header to be present on the incoming request
+  // Getting cookies from the request using the `RequestCookies` API
+  let cookie = request.cookies.get("nextjs");
+  console.log(cookie); // => { name: 'nextjs', value: 'fast', Path: '/' }
+  const allCookies = request.cookies.getAll();
+  console.log(allCookies); // => [{ name: 'nextjs', value: 'fast' }]
+
+  request.cookies.has("nextjs"); // => true
+  request.cookies.delete("nextjs");
+  request.cookies.has("nextjs"); // => false
+
+  // Setting cookies on the response using the `ResponseCookies` API
+  const response = NextResponse.next();
+  response.cookies.set("vercel", "fast");
+  response.cookies.set({
+    name: "vercel",
+    value: "fast",
+    path: "/",
+  });
+  cookie = response.cookies.get("vercel");
+  console.log(cookie); // => { name: 'vercel', value: 'fast', Path: '/' }
+  // The outgoing response will have a `Set-Cookie:vercel=fast;path=/` header.
+
+  return response;
+}
+```
+
+---
+
+#### 헤더 설정
+
+`NextResponse` API를 사용하여 요청 및 응답 헤더를 설정할 수 있다. (요청 헤더 설정은 Next.js v13.0.0부터 가능하다)
+
+```jsx
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  // Clone the request headers and set a new header `x-hello-from-middleware1`
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-hello-from-middleware1", "hello");
+
+  // You can also set request headers in NextResponse.rewrite
+  const response = NextResponse.next({
+    request: {
+      // New request headers
+      headers: requestHeaders,
+    },
+  });
+
+  // Set a new response header `x-hello-from-middleware2`
+  response.headers.set("x-hello-from-middleware2", "hello");
+  return response;
+}
+```
+
+☄️ **Good to know**
+
+백엔드 웹 서버 구성에 따라 [431 Request Header Fields Too Large](https://developer.mozilla.org/docs/Web/HTTP/Status/431) 오류가 발생할 수 있으므로 큰 헤더를 설정을 피하자.
+
+---
+
+#### 응답 생성
+
+`Response` 또는 `NextResponse` 인스턴스를 반환하여 미들웨어에서 직접 응답할 수 있다. ([Next.js v13.1.0](https://nextjs.org/blog/next-13-1#nextjs-advanced-middleware)부터 사용 가능)
+
+```jsx
+// middleware.ts
+import { NextRequest } from "next/server";
+import { isAuthenticated } from "@lib/auth";
+
+// Limit the middleware to paths starting with `/api/`
+export const config = {
+  matcher: "/api/:function*",
+};
+
+export function middleware(request: NextRequest) {
+  // Call our authentication function to check the request
+  if (!isAuthenticated(request)) {
+    // Respond with JSON indicating an error message
+    return Response.json({ success: false, message: "authentication failed" }, { status: 401 });
+  }
+}
+```
+
+#### `NextFetchEvent`와 `waitUntil`
+
+`NextFetchEvent` 객체는 기본 [`FetchEvent`](https://developer.mozilla.org/docs/Web/API/FetchEvent) 객체를 확장하고 [`waitUntil()`](https://developer.mozilla.org/docs/Web/API/ExtendableEvent/waitUntil) 메서드를 포함한다.
+
+`waitUntil()` 메서드는 promise를 인수로 사용하고 promise가 확정될 때까지 미들웨어의 수명을 연장한다. 이는 백그라운드에서 작업을 수행하는 데 유용하다.
+
+```jsx
+// middleware.ts
+import { NextResponse } from "next/server";
+import type { NextFetchEvent, NextRequest } from "next/server";
+
+export function middleware(req: NextRequest, event: NextFetchEvent) {
+  event.waitUntil(
+    fetch("https://my-analytics-platform.com", {
+      method: "POST",
+      body: JSON.stringify({ pathname: req.nextUrl.pathname }),
+    })
+  );
+
+  return NextResponse.next();
+}
+```
+
+---
+
+#### 고급 미들웨어 플래그
+
+Next.js `v13.1`에서는 고급 사용 사례를 처리하기 위해 미들웨어용으로 두 개의 추가 플래그인 `SkipMiddlewareUrlNormalize` 및 `SkipTrailingSlashRedirect`가 도입되었다.
+
+`SkipTrailingSlashRedirect`는 URL의 마지막 슬래시를 추가 또는 제거하기 위해 Next.js 기본 리디렉션을 비활성화한다. 이를 통해 미들웨어 내에서 사용자 정의 처리를 할 수 있게 한다. 이렇게 일부 경로에서는 마지막 슬래시를 유지하고 다른 경로에서는 제거하라 수 있어 점진적인 마이그레이션을 보다 쉽게 할 수 있다.
+
+```jsx
+// next.config.js
+module.exports = {
+  skipTrailingSlashRedirect: true,
+};
+```
+
+```jsx
+// middleware.js
+const legacyPrefixes = ["/docs", "/blog"];
+
+export default async function middleware(req) {
+  const { pathname } = req.nextUrl;
+
+  if (legacyPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+    return NextResponse.next();
+  }
+
+  // apply trailing slash handling
+  if (!pathname.endsWith("/") && !pathname.match(/((?!\.well-known(?:\/.*)?)(?:[^/]+\/)*[^/]+\.\w+)/)) {
+    req.nextUrl.pathname += "/";
+    return NextResponse.redirect(req.nextUrl);
+  }
+}
+```
+
+`SkipMiddlewareUrlNormalize`는 Next.js가 수행하는 URL 정규화를 비활성화하여 직접 방문과 클라이언트 전환을 동일하게 처리할 수 있다. 원래 URL을 사용하여 완전한 제어가 필요한 몇 가지 고급 사례에 유용하다.
+
+```jsx
+// next.config.js
+module.exports = {
+  skipMiddlewareUrlNormalize: true,
+};
+```
+
+```jsx
+// middleware.js
+export default async function middleware(req) {
+  const { pathname } = req.nextUrl;
+
+  // GET /_next/data/build-id/hello.json
+
+  console.log(pathname);
+  // with the flag this now /_next/data/build-id/hello.json
+  // without the flag this would be normalized to /hello
+}
+```
+
+---
+
+#### 런타임
+
+미들웨어는 현재 [Edge runtime](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes)만 지원한다. Node.js 런타임을 사용할 수 없다.
