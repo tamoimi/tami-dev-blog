@@ -136,12 +136,12 @@ export default makeSource({
       [
         rehypePrettyCode,
         {
-          theme: "material-theme-palenight",
-          onVisitHighlightedLine(node: any) {
-            node.properties.className.push("line-highlighted");
+          theme: "nord",
+          onVisitHighlightedLine(node: { properties: { className: string[] } }) {
+            node.properties.className.push("highlighted");
           },
-          onVisitHighlightedWord(node: any) {
-            node.properties.className = ["word-highlighted"];
+          onVisitHighlightedWord(node: { properties: { className: string[] } }) {
+            node.properties.className = ["highlighted", "word"];
           },
         },
       ],
