@@ -1,6 +1,8 @@
 import { ComputedFields, defineDocumentType, makeSource } from "contentlayer/source-files";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
 
 const computedFields: ComputedFields = {
   slug: {
@@ -127,6 +129,30 @@ export default makeSource({
   documentTypes: [Post, Quote, Algorithm, JavaScript, Study],
   mdx: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, options]],
+    // rehypePlugins: [[rehypePrettyCode, options]],
+
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypePrettyCode,
+        {
+          theme: "material-theme-palenight",
+          onVisitHighlightedLine(node: any) {
+            node.properties.className.push("line-highlighted");
+          },
+          onVisitHighlightedWord(node: any) {
+            node.properties.className = ["word-highlighted"];
+          },
+        },
+      ],
+      [
+        rehypeAutolinkHeadings,
+        {
+          properties: {
+            className: ["anchor"],
+          },
+        },
+      ],
+    ],
   },
 });
