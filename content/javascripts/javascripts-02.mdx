@@ -48,14 +48,11 @@ description: bubbling and capturing
 
 이런 흐름을 '이벤트 버블링’이라고 부릅니다. 이벤트가 제일 깊은 곳에 있는 요소에서 시작해 부모 요소를 거슬러 올라가며 발생하는 모양이 마치 물속 거품(bubble)과 닮았기 때문입니다.
 
-<aside>
 🚨 ***거의* 모든 이벤트는 버블링 됩니다.**
 
 키워드는 ‘거의’ 입니다.
 
 `focus` 이벤트와 같이 버블링 되지 않는 이벤트도 있습니다. 버블링 되지 않는 이벤트의 종류에 대해선 조금 후에 알아보겠습니다. 몇몇 이벤트를 제외하곤 대부분의 이벤트는 버블링 됩니다.
-
-</aside>
 
 ---
 
@@ -71,7 +68,6 @@ description: bubbling and capturing
 </body>
 ```
 
-<aside>
 🚨 **event.stopImmediatePropagation()**
 
 한 요소의 특정 이벤트를 처리하는 핸들러가 여러개인 상황에서, 핸들러 중 하나가 버블링을 멈추더라도 나머지 핸들러는 여전히 동작합니다.
@@ -79,7 +75,5 @@ description: bubbling and capturing
 `event.stopPropagation()`은 위쪽으로 일어나는 버블링은 막아주지만, 다른 핸들러들이 동작하는 건 막지 못합니다.
 
 버블링을 멈추고, 요소에 할당된 다른 핸들러의 동작도 막으려면 `event.stopImmediatePropagation()`을 사용해야 합니다. 이 메서드를 사용하면 요소에 할당된 특정 이벤트를 처리하는 핸들러 모두가 동작하지 않습니다.
-
-</aside>
 
 [참고](https://ko.javascript.info/bubbling-and-capturing)
