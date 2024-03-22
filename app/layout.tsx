@@ -31,6 +31,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       {/* title */}
       <head>
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
         <title>Tami Kim</title>
         {/* will add meta tag */}
       </head>
