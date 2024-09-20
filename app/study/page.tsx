@@ -63,7 +63,7 @@ const Javascript = () => {
         </div>
 
         {/* Pagination Controls */}
-        <div className="pagination-controls flex justify-center items-center">
+        <div className="pagination-controls flex justify-center items-center gap-3 mt-4">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
@@ -71,7 +71,7 @@ const Javascript = () => {
           >
             <LeftArrow />
           </button>
-          <span>
+          <span className="text-sm">
             Page {currentPage} of {totalPages}
           </span>
           <button
