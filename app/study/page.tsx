@@ -1,5 +1,7 @@
 "use client";
 
+import LeftArrow from "components/Icons/left-arrow";
+import RightArrow from "components/Icons/right-arrow";
 import PostNav from "components/PostNav";
 import StudyCard from "components/StudyCard";
 import { allStudies } from "contentlayer/generated";
@@ -65,9 +67,9 @@ const Javascript = () => {
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
-            className="px-4 py-2 mx-2 bg-gray-300 rounded disabled:opacity-50"
+            className="p-1 mx-2 bg-gray-300 rounded disabled:opacity-50 text-sm"
           >
-            Previous
+            <LeftArrow />
           </button>
           <span>
             Page {currentPage} of {totalPages}
@@ -75,9 +77,9 @@ const Javascript = () => {
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 mx-2 bg-gray-300 rounded disabled:opacity-50"
+            className="p-1 mx-2 bg-gray-300 rounded disabled:opacity-50"
           >
-            Next
+            <RightArrow />
           </button>
         </div>
       </article>
