@@ -10,7 +10,7 @@ interface PaginationProps {
 
 const Pagination = ({ currentPage, totalPages, handleNextPage, handlePrevPage }: PaginationProps) => {
   return (
-    <div className="pagination-controls flex justify-center items-center gap-3 mt-4">
+    <div className="pagination-controls flex justify-center items-center gap-3 mt-6">
       <button
         onClick={handlePrevPage}
         disabled={currentPage === 1}
@@ -26,6 +26,7 @@ const Pagination = ({ currentPage, totalPages, handleNextPage, handlePrevPage }:
         disabled={currentPage === totalPages}
         className="p-1 mx-2 bg-gray-300 rounded disabled:opacity-50"
       >
+        
         <RightArrow />
       </button>
     </div>
