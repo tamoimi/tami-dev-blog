@@ -2,8 +2,8 @@
 
 import LeftArrow from "components/Icons/left-arrow";
 import RightArrow from "components/Icons/right-arrow";
-import PostNav from "components/PostNav";
-import StudyCard from "components/StudyCard";
+import PostNav from "components/post-nav";
+import StudyCard from "components/study-card";
 import { allStudies } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 import { useState } from "react";

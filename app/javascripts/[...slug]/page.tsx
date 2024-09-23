@@ -1,5 +1,5 @@
-import Comment from "components/Comment";
-import { MdxComponent } from "components/MdxComponent";
+import Comment from "components/comment";
+import { MdxComponent } from "components/mdx-component";
 import { allJavaScripts } from "contentlayer/generated";
 import { format, parseISO } from "date-fns";
 import { Metadata } from "next";

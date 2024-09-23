@@ -1,4 +1,4 @@
-import { MdxComponent } from "components/MdxComponent";
+import { MdxComponent } from "components/mdx-component";
 import { allQuotes } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 import { format, parseISO } from "date-fns";

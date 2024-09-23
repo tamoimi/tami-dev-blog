@@ -1,5 +1,5 @@
-import NavBar from "components/NavBar";
-import { ThemeProvider } from "components/ThemeProvider";
+import NavBar from "components/nav-bar";
+import { ThemeProvider } from "components/theme-provider";
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR, Roboto } from "next/font/google";
 import "./globals.css";

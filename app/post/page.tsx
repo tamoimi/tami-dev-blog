@@ -1,5 +1,5 @@
-import PostCard from "components/PostCard";
-import PostNav from "components/PostNav";
+import PostCard from "components/post-card";
+import PostNav from "components/post-nav";
 import { allPosts } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 

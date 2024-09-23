@@ -1,51 +1,49 @@
-import { notFound } from "next/navigation"
-import { Metadata } from "next"
-import { allQuotes } from "contentlayer/generated"
-import { MdxComponent } from "components/MdxComponent"
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import { allQuotes } from "contentlayer/generated";
+import { MdxComponent } from "components/mdx-component";
 
 interface QuoteProps {
   params: {
-    slug: string[]
-  }
+    slug: string[];
+  };
 }
 
 async function getPageFromParams(params: QuoteProps["params"]) {
-  const slug = params?.slug?.join("/")
-  const quote = allQuotes.find((quote) => quote.slugAsParams === slug)
+  const slug = params?.slug?.join("/");
+  const quote = allQuotes.find((quote) => quote.slugAsParams === slug);
 
   if (!quote) {
-    null
+    null;
   }
 
-  return quote
+  return quote;
 }
 
-export async function generateMetadata({
-  params,
-}: QuoteProps): Promise<Metadata> {
-  const quote = await getPageFromParams(params)
+export async function generateMetadata({ params }: QuoteProps): Promise<Metadata> {
+  const quote = await getPageFromParams(params);
 
   if (!quote) {
-    return {}
+    return {};
   }
 
   return {
     title: quote.title,
     description: quote.description,
-  }
+  };
 }
 
 export async function generateStaticParams(): Promise<QuoteProps["params"][]> {
   return allQuotes.map((quote) => ({
     slug: quote.slugAsParams.split("/"),
-  }))
+  }));
 }
 
 export default async function PagePage({ params }: QuoteProps) {
-  const quote = await getPageFromParams(params)
+  const quote = await getPageFromParams(params);
 
   if (!quote) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -55,5 +53,5 @@ export default async function PagePage({ params }: QuoteProps) {
       <hr />
       <MdxComponent code={quote.body.code} />
     </article>
-  )
+  );
 }

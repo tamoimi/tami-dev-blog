@@ -1,5 +1,5 @@
-import JavaScriptCard from "components/JavaScriptCard";
-import PostNav from "components/PostNav";
+import JavaScriptCard from "components/java-script-card";
+import PostNav from "components/post-nav";
 import { allJavaScripts } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 

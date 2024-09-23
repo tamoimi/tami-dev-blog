@@ -1,6 +1,6 @@
 "use client";
 
-import PostCard from "components/PostCard";
+import PostCard from "components/post-card";
 import { allPosts } from "contentlayer/generated";
 import { compareDesc } from "date-fns";
 import Link from "next/link";
