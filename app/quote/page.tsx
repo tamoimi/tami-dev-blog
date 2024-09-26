@@ -4,11 +4,16 @@ import { compareDesc } from "date-fns";
 import { format, parseISO } from "date-fns";
 
 const Quote = () => {
+  // ===================================================================================================================
+  // compareDesc: 날짜 기준으로 내림차순 정렬 뒤 결과를 저장한다.
+  // ===================================================================================================================
+  const quotes = allQuotes.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+
   return (
     <>
       <h1 className="underline decoration-cyan-600 mb-6 text-center">You can never do anything by half!</h1>
       <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
-        {allQuotes.map((quote, idx) => (
+        {quotes.map((quote, idx) => (
           <article
             key={idx}
             className=" block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 h-96 overflow-x-hidden [&::-webkit-scrollbar]:[width:8px]
