@@ -1,3 +1,5 @@
+"use client"
+
 import usePagination from "app/hooks/use-pagination";
 import JavaScriptCard from "components/java-script-card";
 import Pagination from "components/pagination";
