@@ -12,11 +12,13 @@ const Algorithms = () => {
   // compareDesc: 날짜 기준으로 내림차순 정렬 뒤 결과를 저장한다.
   // ===================================================================================================================
   const algorithms = allAlgorithms.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
-
+  console.log("allAlgorithms", allAlgorithms);
   // ===================================================================================================================
   // pagination
   // ===================================================================================================================
   const size = 5;
+
+  // usePagination hook
   const {
     currentData: currentAlgorithms,
     currentPage,

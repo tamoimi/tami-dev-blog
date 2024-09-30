@@ -1,10 +1,10 @@
-import Comment from "components/comment";
 import { MdxComponent } from "components/mdx-component";
 import { allAlgorithms } from "contentlayer/generated";
 import { format, parseISO } from "date-fns";
 import { Metadata } from "next";
 import { getMDXComponent, useMDXComponent } from "next-contentlayer/hooks";
 import { notFound } from "next/navigation";
+import Comment from "components/comment";
 
 interface AlgorithmProps {
   params: {
@@ -60,7 +60,7 @@ export default async function StudyPage({ params }: any) {
       <div className="my-4">
         <MdxComponent code={algorithm.body.code} />
       </div>
-      <Comment />
+      {/* <Comment /> */}
     </article>
   );
 }
