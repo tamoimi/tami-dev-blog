@@ -1,4 +1,4 @@
-import Comment from "components/comment";
+import GitHubComment from "components/git-hub-comment";
 import { MdxComponent } from "components/mdx-component";
 import { allStudies } from "contentlayer/generated";
 import { format, parseISO } from "date-fns";
@@ -59,7 +59,7 @@ export default async function StudyPage({ params }: any) {
       <div className="my-4">
         <MdxComponent code={study.body.code} />
       </div>
-      <Comment />
+      <GitHubComment />
     </article>
   );
 }

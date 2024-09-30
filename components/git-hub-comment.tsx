@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 
-const Comment = () => {
+const GitHubComment = () => {
   const { setTheme, theme } = useTheme();
 
   const toggleTheme = () => {
@@ -30,4 +30,4 @@ const Comment = () => {
   );
 };
 
-export default Comment;
+export default GitHubComment;
