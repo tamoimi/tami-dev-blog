@@ -14,7 +14,7 @@ const Pagination = ({ currentPage, totalPages, handleNextPage, handlePrevPage }:
       <button
         onClick={handlePrevPage}
         disabled={currentPage === 1}
-        className="p-1 mx-2 bg-gray-300 rounded disabled:opacity-50 text-sm"
+        className="p-1 mx-2 bg-gray-300 dark:bg-gray-500 rounded disabled:opacity-50 text-sm"
       >
         <LeftArrow />
       </button>
@@ -24,7 +24,7 @@ const Pagination = ({ currentPage, totalPages, handleNextPage, handlePrevPage }:
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        className="p-1 mx-2 bg-gray-300 rounded disabled:opacity-50"
+        className="p-1 mx-2 bg-gray-300 dark:bg-gray-500 rounded disabled:opacity-50"
       >
         
         <RightArrow />
